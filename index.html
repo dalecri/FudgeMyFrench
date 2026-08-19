@@ -21,6 +21,9 @@
           },
           screens: {
             'xs': '380px',
+            'ipadmini': '768px',
+            'ipad': '820px',
+            'landscape-mobile': { 'raw': '(max-height: 500px) and (orientation: landscape)' }
           }
         }
       }
@@ -29,25 +32,25 @@
 
   <style>
     :root {
-      /* Warm Linen / Cream Background */
       --app-bg: #F2ECE4;
       --paper: #FAF8F4;
       --ink: #2C2830;
       --ink-soft: #635E6A;
-      --ink-faint: #BAB4C1;
       
-      /* Pure themed card backgrounds */
-      --theme-blue-bg: #4C599E;
-      --theme-blue-blob: rgba(255, 255, 255, 0.18);
-      
-      --theme-orange-bg: #F3D086;
-      --theme-orange-blob: rgba(255, 255, 255, 0.22);
-      
-      --theme-sage-bg: #87A691;
-      --theme-sage-blob: rgba(255, 255, 255, 0.2);
-      
-      --theme-rose-bg: #D48A93;
-      --theme-rose-blob: rgba(255, 255, 255, 0.22);
+      /* Vibrant Theme Saturated Colors */
+      --theme-blue-sat: #4C599E;
+      --theme-orange-sat: #E2A648;
+      --theme-sage-sat: #6F947B;
+      --theme-rose-sat: #C97782;
+
+      /* Pastel Light Exterior Colors */
+      --theme-blue-light: #EEF1F8;
+      --theme-orange-light: #FDF5E6;
+      --theme-sage-light: #EFF5F0;
+      --theme-rose-light: #FAEEEE;
+
+      /* Translucent Blob Backgrounds for Back Faces */
+      --blob-translucent: rgba(255, 255, 255, 0.22);
 
       --shadow-sm: 0 4px 12px rgba(44, 40, 48, 0.05);
       --shadow-md: 0 12px 36px rgba(44, 40, 48, 0.12);
@@ -59,9 +62,12 @@
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.3s ease;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
     }
 
-    /* Prevent text selection during swipe gestures */
     .fcard {
       user-select: none;
       -webkit-user-select: none;
@@ -93,13 +99,11 @@
       justify-content: center;
       overflow: hidden;
       box-shadow: var(--shadow-md);
+      border: 6px solid #FFFFFF;
     }
 
-    /* Completely opaque card faces to prevent overlap peeking */
     .face.front {
-      background-color: var(--paper);
       transform: rotateY(0deg);
-      border: 8px solid #FFFFFF;
       z-index: 2;
     }
 
@@ -108,85 +112,53 @@
       z-index: 1;
     }
 
-    /* Wavy grid vectors replicating natural lines - darkened & thickened for mobile visibility */
-    .grid-blue {
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><path d='M 0 10 Q 9 8 18 10 T 36 10' fill='none' stroke='%23C1D5E8' stroke-width='1.8'/><path d='M 10 0 Q 8 9 10 18 T 10 36' fill='none' stroke='%23C1D5E8' stroke-width='1.8'/></svg>");
-    }
-    .grid-orange {
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><path d='M 0 10 Q 9 11 18 10 T 36 10' fill='none' stroke='%23FADAA2' stroke-width='1.8'/><path d='M 10 0 Q 11 9 10 18 T 10 36' fill='none' stroke='%23FADAA2' stroke-width='1.8'/></svg>");
-    }
-    .grid-sage {
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><path d='M 0 10 Q 9 9 18 10 T 36 10' fill='none' stroke='%23C9DBCF' stroke-width='1.8'/><path d='M 10 0 Q 9 9 10 18 T 10 36' fill='none' stroke='%23C9DBCF' stroke-width='1.8'/></svg>");
-    }
-    .grid-rose {
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36'><path d='M 0 10 Q 9 8 18 10 T 36 10' fill='none' stroke='%23F0CCD1' stroke-width='1.8'/><path d='M 10 0 Q 8 9 10 18 T 10 36' fill='none' stroke='%23F0CCD1' stroke-width='1.8'/></svg>");
+    /* BACK FACE: Saturated Backgrounds */
+    .theme-blue { background-color: var(--theme-blue-sat); }
+    .theme-orange { background-color: var(--theme-orange-sat); }
+    .theme-sage { background-color: var(--theme-sage-sat); }
+    .theme-rose { background-color: var(--theme-rose-sat); }
+
+    /* FRONT FACE: Light Pastel Backgrounds */
+    .theme-light-blue { background-color: var(--theme-blue-light); }
+    .theme-light-orange { background-color: var(--theme-orange-light); }
+    .theme-light-sage { background-color: var(--theme-sage-light); }
+    .theme-light-rose { background-color: var(--theme-rose-light); }
+
+    /* FRONT FACE: Saturated Center Blob Fills */
+    .shape-saturated-blue { background-color: var(--theme-blue-sat) !important; }
+    .shape-saturated-orange { background-color: var(--theme-orange-sat) !important; }
+    .shape-saturated-sage { background-color: var(--theme-sage-sat) !important; }
+    .shape-saturated-rose { background-color: var(--theme-rose-sat) !important; }
+
+    /* BACK FACE: Translucent Blob Fills */
+    .face.back .geo-shape {
+      background-color: var(--blob-translucent);
     }
 
-    /* Guarantees a perfect circle regardless of card proportions using aspect-ratio */
-    .spotlight {
-      width: 86%;
-      aspect-ratio: 1 / 1;
-      background: var(--paper);
-      border-radius: 50%;
-      border: none;
-      box-shadow: inset 0 2px 8px rgba(44, 40, 48, 0.02), var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      gap: 16px;
-      position: relative;
-    }
-
-    /* Straightened painted tape banner style for French words */
-    .word-banner {
-      padding: 8px 24px;
-      border-radius: 12px;
-      color: #FFFFFF;
-      font-weight: 600;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      transform: none;
-      max-width: 92%;
-      word-wrap: break-word;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Theme card back colors */
-    .theme-blue { background-color: var(--theme-blue-bg); }
-    .theme-orange { background-color: var(--theme-orange-bg); }
-    .theme-sage { background-color: var(--theme-sage-bg); }
-    .theme-rose { background-color: var(--theme-rose-bg); }
-
-    /* Animated, morphing organic shapes on the backside */
+    /* Morphing Organic Shape Container */
     .geo-shape {
-      width: 200px;
-      height: 200px;
+      width: 220px;
+      height: 220px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px;
       position: relative;
       animation: morphingBlob 10s ease-in-out infinite alternate;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
     }
 
     .geo-shape.shape-1 {
       border-radius: 54% 46% 62% 38% / 44% 56% 44% 56%;
-      background: var(--theme-blue-blob);
     }
     .geo-shape.shape-2 {
       border-radius: 38% 62% 42% 58% / 52% 38% 62% 48%;
-      background: var(--theme-orange-blob);
     }
     .geo-shape.shape-3 {
       border-radius: 48% 52% 32% 68% / 42% 68% 32% 58%;
-      background: var(--theme-sage-blob);
     }
     .geo-shape.shape-4 {
       border-radius: 62% 38% 48% 52% / 58% 32% 68% 42%;
-      background: var(--theme-rose-blob);
     }
 
     @keyframes morphingBlob {
@@ -219,31 +191,6 @@
       to { transform: none; opacity: 1; }
     }
 
-    /* Opacity guard to prevent lower card content from bleeding through */
-    .fcard.behind .spotlight,
-    .fcard.behind .geo-shape,
-    .fcard.behind2 .spotlight,
-    .fcard.behind2 .geo-shape {
-      opacity: 0 !important;
-      transition: opacity 0.2s ease;
-    }
-
-    .fcard:not(.behind):not(.behind2) .spotlight,
-    .fcard:not(.behind):not(.behind2) .geo-shape {
-      opacity: 1 !important;
-      transition: opacity 0.25s ease;
-    }
-
-    /* Hide Illustrative examples when minimal toggle is active */
-    .hide-examples .illustration-text {
-      display: none !important;
-    }
-    
-    .hide-examples .spotlight {
-      gap: 0px !important;
-    }
-
-    /* Minimalist swipe feedback badges */
     .stamp {
       position: absolute;
       top: 24px;
@@ -263,147 +210,133 @@
       right: 24px;
       color: #1E4620;
       background-color: #E2F3E5;
-      transform: none;
     }
     .stamp.revoir {
       left: 24px;
       color: #611D24;
       background-color: #FCE8E9;
-      transform: none;
     }
 
-    /* ---------- Premium Tactile Minimalist Buttons ---------- */
+    /* Tactile Control Buttons */
     .tactile-btn {
       border-radius: 9999px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 10px rgba(44, 40, 48, 0.04), 0 2px 4px rgba(44, 40, 48, 0.02);
+      box-shadow: 0 4px 12px rgba(44, 40, 48, 0.06);
       background-color: #FFFFFF;
-    }
-
-    .tactile-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(44, 40, 48, 0.07);
+      touch-action: manipulation;
     }
 
     .tactile-btn:active {
-      transform: translateY(1px);
+      transform: scale(0.92);
       box-shadow: 0 2px 6px rgba(44, 40, 48, 0.03);
     }
 
     .btn-revoir {
       background-color: #FDF4F5;
       color: #D48A93;
-      border: 1.5px solid rgba(212, 138, 147, 0.18);
-    }
-    .btn-revoir:hover {
-      background-color: #FCE8E9;
+      border: 1.5px solid rgba(212, 138, 147, 0.22);
     }
 
     .btn-flip {
       background-color: #FFFFFF;
       color: #635E6A;
-      border: 1.5px solid rgba(99, 94, 106, 0.12);
-    }
-    .btn-flip:hover {
-      background-color: #FAF8F4;
+      border: 1.5px solid rgba(99, 94, 106, 0.15);
     }
 
     .btn-acquis {
       background-color: #F1F7F3;
       color: #87A691;
-      border: 1.5px solid rgba(135, 166, 145, 0.18);
-    }
-    .btn-acquis:hover {
-      background-color: #E2F3E5;
+      border: 1.5px solid rgba(135, 166, 145, 0.22);
     }
   </style>
 </head>
 
-<body class="h-dvh w-screen flex flex-col items-center justify-between p-4 md:p-6 pb-28 md:pb-6 select-none overflow-hidden relative">
+<body class="h-dvh w-screen flex flex-col items-center justify-between p-3 xs:p-4 ipadmini:p-6 select-none overflow-hidden relative">
 
-  <!-- Header Section: Centered title on mobile, aligned on desktop -->
-  <header class="w-full max-w-[380px] md:max-w-[850px] flex items-center justify-center md:justify-between py-3 md:py-2 z-20 shrink-0">
-    <div class="brand font-serif font-semibold text-2xl text-slate-800 tracking-tight flex items-center gap-1.5 select-none text-center">
+  <header class="w-full max-w-[340px] xs:max-w-[380px] ipadmini:max-w-[600px] ipad:max-w-[850px] flex items-center justify-between py-2 z-20 shrink-0 gap-2">
+    <!-- Brand Logo -->
+    <div class="brand font-serif font-semibold text-xl xs:text-2xl text-slate-800 tracking-tight flex items-center gap-1.5 select-none shrink-0">
       Car<em>tes</em>
       <span class="w-1.5 h-1.5 rounded-full bg-[#E38379]"></span>
     </div>
+
+    <!-- Header Navigation Switcher -->
+    <nav class="flex items-center bg-white/80 backdrop-blur-md p-1 rounded-full border border-slate-200/70 shadow-xs gap-0.5 shrink-0">
+      <button id="tabStudy" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all bg-slate-900 text-white shadow-xs">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+          <path d="M6 4h14a2 2 0 0 1 2 2v10"></path>
+        </svg>
+        <span>Étudier</span>
+      </button>
+
+      <button id="tabManage" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all text-slate-500 hover:text-slate-800">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>Ajouter</span>
+      </button>
+    </nav>
   </header>
 
-  <!-- Main View Area: Expands dynamically on mobile to show larger card stack -->
-  <main class="w-full max-w-[380px] md:max-w-[850px] flex-grow flex flex-col justify-center overflow-visible py-2">
+  <main class="w-full max-w-[340px] xs:max-w-[380px] ipadmini:max-w-[600px] ipad:max-w-[850px] flex-grow flex flex-col justify-center overflow-visible py-1 xs:py-2">
     
-    <!-- STUDY VIEW: Action buttons hidden entirely on mobile for a distraction-free swipe experience -->
-    <section id="viewStudy" class="w-full h-full flex flex-col justify-between overflow-visible">
+    <!-- STUDY VIEW -->
+    <section id="viewStudy" class="w-full h-full flex flex-col justify-between items-center overflow-visible">
       
-      <!-- Minimalist Progress Stats -->
-      <div class="w-full flex justify-between items-center px-4 shrink-0 mb-3 md:mb-4 text-slate-500 text-xs font-semibold relative">
-        <span id="deckCount" class="w-1/2 text-left text-[11px] md:text-xs">0 restants</span>
-        <span id="masteredCount" class="w-1/2 text-right text-[11px] md:text-xs">0 acquis</span>
-      </div>
-
-      <!-- Main Deck Canvas Area: Capped on desktop, expanded on mobile to look bold and beautiful -->
-      <div class="relative w-full max-w-[300px] xs:max-w-[330px] md:max-w-[330px] aspect-[3/4] h-[60vh] xs:h-[62vh] md:max-h-[520px] flex-grow mx-auto my-1 md:my-3 overflow-visible flex items-center justify-center">
+      <!-- Card Stack Canvas -->
+      <div class="relative w-full max-w-[280px] xs:max-w-[320px] ipadmini:max-w-[380px] ipad:max-w-[420px] aspect-[3/4] h-[50vh] xs:h-[54vh] ipadmini:h-[56vh] max-h-[460px] flex-grow mx-auto my-auto overflow-visible flex items-center justify-center">
         <div id="deck" class="relative w-full h-full overflow-visible">
           <!-- Dynamic card injections -->
         </div>
       </div>
 
-      <!-- Desktop-only controls block: Hidden on mobile to let the cards take center stage -->
-      <div class="shrink-0 hidden md:flex flex-col items-center gap-2 md:gap-3 mt-4">
-        <div id="actions" class="flex justify-center items-center gap-5 md:gap-6">
-          <button id="btnLeft" aria-label="À revoir" class="tactile-btn btn-revoir w-[52px] h-[52px]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <path d="M1 4v6h6" />
-              <path d="M3.5 15a9 9 0 1 0 2-9.7L1 10" />
-            </svg>
-          </button>
-          
-          <button id="btnFlip" aria-label="Retourner la carte" class="tactile-btn btn-flip w-[42px] h-[42px]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 2l4 4-4 4" />
-              <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-              <path d="M7 22l-4-4 4-4" />
-              <path d="M21 13v1a4 4 0 0 1-4 4H3" />
-            </svg>
-          </button>
-          
-          <button id="btnRight" aria-label="Acquis" class="tactile-btn btn-acquis w-[52px] h-[52px]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
-          </button>
-        </div>
-        <span class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold text-center select-none">
-          Glisser pour trier · Clic pour retourner
-        </span>
+      <!-- Action Buttons Block -->
+      <div class="shrink-0 flex items-center justify-center gap-5 xs:gap-6 my-2 ipadmini:my-4">
+        <button id="btnLeft" aria-label="À revoir" class="tactile-btn btn-revoir w-[52px] h-[52px] xs:w-[58px] xs:h-[58px] ipadmini:w-[62px] ipadmini:h-[62px]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M1 4v6h6" />
+            <path d="M3.5 15a9 9 0 1 0 2-9.7L1 10" />
+          </svg>
+        </button>
+        
+        <button id="btnFlip" aria-label="Retourner la carte" class="tactile-btn btn-flip w-[44px] h-[44px] xs:w-[48px] xs:h-[48px] ipadmini:w-[52px] ipadmini:h-[52px]">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 2l4 4-4 4" />
+            <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+            <path d="M7 22l-4-4 4-4" />
+            <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+          </svg>
+        </button>
+        
+        <button id="btnRight" aria-label="Acquis" class="tactile-btn btn-acquis w-[52px] h-[52px] xs:w-[58px] xs:h-[58px] ipadmini:w-[62px] ipadmini:h-[62px]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </button>
       </div>
     </section>
 
-    <!-- CARD CREATOR VIEW: Beautiful paper form perfectly proportioned and centered on the screen -->
-    <section id="viewManage" class="hidden w-full h-full flex-col justify-center items-center overflow-visible">
-      <div class="bg-white rounded-[32px] p-5 md:p-6 shadow-md w-full max-w-[320px] md:max-w-[360px] mx-auto">
-        <h3 class="font-serif font-semibold text-base md:text-lg text-slate-800 mb-3 md:mb-4 text-center">Nouvelle carte</h3>
+    <!-- CARD CREATOR VIEW -->
+    <section id="viewManage" class="hidden w-full h-full flex-col justify-center items-center overflow-visible my-auto">
+      <div class="bg-white rounded-[28px] ipadmini:rounded-[36px] p-5 xs:p-6 shadow-md w-full max-w-[320px] xs:max-w-[340px] ipadmini:max-w-[420px] mx-auto">
+        <h3 class="font-serif font-semibold text-base ipadmini:text-xl text-slate-800 mb-4 text-center">Nouvelle carte</h3>
         
-        <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="space-y-3 mb-5">
           <div>
-            <label class="text-[9px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Français</label>
-            <input id="inFr" placeholder="ex: Fier" class="w-full text-xs md:text-sm rounded-xl px-3 py-2 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
+            <label class="text-[9px] ipadmini:text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Français</label>
+            <input id="inFr" placeholder="ex: Fier" class="w-full text-xs ipadmini:text-sm rounded-xl px-3.5 py-2.5 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
           </div>
           <div>
-            <label class="text-[9px] uppercase font-bold tracking-wider text-slate-400 block mb-1">English</label>
-            <input id="inEn" placeholder="ex: Proud" class="w-full text-xs md:text-sm rounded-xl px-3 py-2 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
+            <label class="text-[9px] ipadmini:text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">English</label>
+            <input id="inEn" placeholder="ex: Proud" class="w-full text-xs ipadmini:text-sm rounded-xl px-3.5 py-2.5 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
           </div>
         </div>
 
-        <div class="mb-4 md:mb-5">
-          <label class="text-[9px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Explication ou Exemple (optionnel)</label>
-          <textarea id="inDesc" placeholder="ex: Quand ton cœur bat tout fort et grandit..." class="w-full text-xs md:text-sm rounded-xl px-3 py-2 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800 h-[64px] md:h-[68px] resize-none"></textarea>
-        </div>
-
-        <button id="btnAdd" disabled class="w-full py-2.5 bg-[#2C2830] text-white text-xs font-semibold rounded-xl hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-35 disabled:cursor-not-allowed">
+        <button id="btnAdd" disabled class="w-full py-3 bg-[#2C2830] text-white text-xs ipadmini:text-sm font-semibold rounded-xl hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-35 disabled:cursor-not-allowed">
           Ajouter au jeu
         </button>
       </div>
@@ -411,28 +344,14 @@
 
   </main>
 
-  <!-- Sizable Integrated Navigation Bar at bottom on mobile, repositioning cleanly on desktop header -->
-  <nav class="tabs fixed bottom-6 left-1/2 -translate-x-1/2 md:absolute md:top-6 md:bottom-auto md:right-6 md:left-auto md:translate-x-0 flex items-center bg-white md:bg-slate-200/50 p-1 md:p-1 rounded-full border border-slate-300/40 backdrop-blur-md shadow-lg md:shadow-none z-30 shrink-0 gap-1 md:gap-1">
-    <button id="tabStudy" class="px-5 md:px-5 py-2 md:py-1.5 text-xs md:text-xs font-semibold rounded-full transition-all text-slate-600 active bg-slate-800 text-white md:bg-white md:!text-slate-800 shadow-sm">Étudier</button>
-    <button id="tabManage" class="px-5 md:px-5 py-2 md:py-1.5 text-xs md:text-xs font-semibold rounded-full transition-all text-slate-500">Ajouter</button>
-    <div id="navDivider" class="h-4 w-[1px] bg-slate-300/60 mx-1"></div>
-    <button id="btnToggleExamples" aria-label="Masquer les exemples" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-800 active:scale-95">
-      <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-      </svg>
-    </button>
-  </nav>
-
-  <!-- Minimal Notifications Toast -->
+  <!-- Notification Toast -->
   <div id="toast" class="toast"></div>
 
   <script>
     (() => {
       'use strict';
       
-      const KEY = 'cartes-deck-v3';
-      const DEFAULT_DESC = "Un mot précieux de notre vocabulaire de tous les jours.";
+      const KEY = 'cartes-deck-v5';
       
       function uid() {
         return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -442,103 +361,6 @@
       let queue = [];
       let flipped = false;
       let animating = false;
-      let hideExamples = false;
-
-      // Delightful conversational definitions
-      const cuteExplorations = {
-        'à gauche': "Quand tu tournes du côté de ton cœur, là où la montre ne tourne pas.",
-        'à droite': "Le côté de la main avec laquelle tu dessines souvent tes plus belles maisons.",
-        'tout droit': "Suivre son nez sans jamais regarder sur le côté, comme une petite flèche.",
-        'en face de': "Quand tu regardes directement un ami dans les yeux de l'autre côté de la table.",
-        'à côté de': "Tout près, juste à un bras de distance pour pouvoir chuchoter un secret.",
-        'au coin de': "L'endroit magique où deux rues se rencontrent pour former un angle.",
-        'au bout de': "Tout au fond du chemin, là où l'horizon commence à s'ouvrir.",
-        'vers': "Marcher joyeusement dans une direction en gardant les yeux fixés sur son but.",
-        'au-dessus de': "Là où volent les oiseaux et où dorment les nuages douillets.",
-        'au-dessous de': "Sous la table, là où se cachent parfois les petits chats timides.",
-        'traverser': "Passer prudemment d'un trottoir à l'autre en tenant la main d'un grand.",
-        'faire demi-tour': "Tourner sur ses talons pour revenir sur ses pas comme si on avait oublié son ours.",
-        'fier / fière': "Quand ton cœur bat tout fort et grandit parce que tu as accompli quelque chose de difficile.",
-        'déçu(e)': "Quand tu espérais tellement un rayon de soleil, mais que la pluie commence à tomber.",
-        'inquiet / inquiète': "Ce petit sentiment tout gris dans le ventre quand on ne sait pas ce qui va se passer.",
-        'soulagé(e)': "Une grande bouffée d'air frais quand une petite peur s'envole enfin.",
-        'gêné(e)': "Quand tes joues deviennent soudainement toutes rouges comme deux petites tomates.",
-        'épuisé(e)': "Quand tes paupières pèsent trois tonnes et que ton lit semble être le plus doux des nuages.",
-        'agacé(e)': "Ce petit nuage de poussière qui frotte dans ta tête quand les choses ne marchent pas.",
-        'ravi(e)': "Un grand sourire qui s'affiche sur ton visage et des petits papillons dans le cœur.",
-        'bouleversé(e)': "Quand tes émotions se mélangent dans une grande tempête et que tu as besoin d'un gros câlin.",
-        'méfiant(e)': "Quand tu fronces un peu les sourcils et regardes de côté pour voir s'il n'y a pas un piège.",
-        'avoir hâte de': "Compter les dodos sur ses doigts en attendant le jour d'une merveilleuse surprise.",
-        'en avoir marre de': "Croiser fermement les bras en soupirant parce qu'on a déjà fait ça trop de fois.",
-        'se réveiller': "Ouvrir doucement les yeux le matin quand le premier rayon de soleil chatouille ton nez.",
-        'se dépêcher': "Mettre ses chaussures en vitesse pour ne pas laisser filer l'autobus de l'école.",
-        'ranger': "Remettre chaque petit jouet dans sa maisonnette pour que la chambre puisse respirer.",
-        'nettoyer': "Faire briller la table avec de l'eau savonneuse jusqu'à voir son reflet dedans.",
-        'faire la lessive': "Laver les habits parfumés qui dansent en rond dans la machine magique.",
-        'faire les courses': "Remplir le panier de bonnes pommes rouges et de pain croustillant pour le goûter.",
-        'nourrir': "Donner des petits grains de bonheur ou de la pâtée à ton fidèle petit compagnon.",
-        'se détendre': "S'allonger sur l'herbe douce et regarder les nuages dessiner des animaux sauvages.",
-        's’occuper de': "Prendre bien soin d'une petite plante ou d'un ami en lui offrant toute ton attention.",
-        'oublier': "Quand un petit souvenir s'est caché si profondément qu'on ne le retrouve plus pour l'instant.",
-        'emmener': "Prendre la main de quelqu'un pour l'inviter à faire un beau voyage à tes côtés.",
-        'rapporter': "Ramener un joli trésor trouvé dehors pour le partager à la maison.",
-        'la réunion': "Un moment où plusieurs personnes s'asseyent en cercle pour s'écouter et échanger de belles idées.",
-        'l’échéance': "Le jour entouré de rouge sur le calendrier où le travail doit être terminé.",
-        'le dossier': "Une jolie chemise en carton qui garde bien au chaud tous tes papiers précieux.",
-        'la mise à jour': "Apporter du sang neuf et des nouvelles idées pour rajeunir quelque chose.",
-        'le compte rendu': "Une jolie histoire écrite pour raconter tout ce qui s'est dit pendant la séance.",
-        'gérer': "Organiser les choses comme un chef d'orchestre pour que tout le monde joue en harmonie.",
-        'transmettre': "Passer un message ou un objet à un voisin pour qu'il continue sa route.",
-        'joindre': "Attacher ensemble deux morceaux pour qu'ils s'entraident.",
-        'le porte-parole': "La personne choisie pour prêter sa jolie voix aux messages de tout le groupe.",
-        'la demande de renseignements': "Poser une petite question timide pour mieux comprendre le monde.",
-        'le délai': "Le petit temps que l'on s'accorde pour finir un dessin en toute tranquillité.",
-        'accuser réception': "Faire un petit signe de la main ou envoyer un mot pour dire: bien reçu !",
-        'néanmoins': "Un petit pont de mots pour passer à une autre idée sans faire de vagues.",
-        'bien que': "Une jolie pirouette pour dire que quelque chose se produit malgré un obstacle.",
-        'pourtant': "Un petit mot étonné qui montre que les choses ne se passent pas comme prévu.",
-        'd’ailleurs': "Ajouter un petit mot de plus au bord de la conversation pour l'enrichir.",
-        'en revanche': "Faire pencher la balance de l'autre côté avec un argument tout neuf.",
-        'quant à': "Pointer doucement du doigt un sujet particulier pour s'en occuper à son tour.",
-        'afin de': "La direction que prend une action pour réussir à atteindre son petit rêve.",
-        'à condition que': "Une petite règle du jeu à accepter pour pouvoir s'amuser tous ensemble.",
-        'dès que': "Au moment précis, sans perdre une seule seconde, comme un signal de départ.",
-        'tandis que': "Pendant que tu dessines un oiseau, ton ami peint un grand soleil doré.",
-        'malgré': "Avancer courageusement sous la pluie sans perdre son sourire.",
-        'dorénavant': "À partir de maintenant, on fera les choses avec un regard tout nouveau.",
-        'parfois': "Pas tous les jours, juste quand une petite fée décide de passer.",
-        'souvent': "De nombreuses fois, presque comme une habititude qu'on adore répéter.",
-        'rarement': "Aussi exceptionnel que de croiser un trèfle à quatre feuilles dans le jardin.",
-        'tout à l’heure': "Dans un petit moment, juste après avoir fini de ranger nos crayons.",
-        'la veille': "Le jour juste avant, celui qui s'est endormi pour laisser place à aujourd'hui.",
-        'le lendemain': "Le jour qui attend sagement que la nuit se termine pour s'éveiller.",
-        'auparavant': "Il y a bien longtemps, avant que l'histoire ne commence.",
-        'désormais': "Le point de départ d'une toute nouvelle habitude à garder dans le cœur.",
-        'tous les deux jours': "Sauter un dodo sur deux pour faire une jolie routine régulière.",
-        'de temps en temps': "Quand l'envie nous prend, comme une surprise au milieu de la semaine.",
-        'le rez-de-chaussée': "La partie de la maison qui touche la terre et où les pas résonnent directement.",
-        'l’étage': "La jolie grimpette par l'escalier de bois pour se rapprocher doucement des nuages.",
-        'le grenier': "Le nid secret sous le toit où dorment les vieux jouets et les souvenirs oubliés.",
-        'le sous-sol': "Sous les pieds, là où dorment les outils et les réserves de confitures.",
-        'la cour': "Un petit carré de liberté dehors pour courir sous le grand soleil.",
-        'le quai': "Un pont de planches au bord de l'eau pour saluer les bateaux qui partent en voyage.",
-        'la rivière': "Un long ruban bleu qui coule et chante au milieu des arbres.",
-        'le chauffage': "La douce chaleur invisible qui enveloppe la maison quand l'hiver est là.",
-        'la poussière': "Des petits grains gris volants qui aiment se poser sur les meubles pour faire des dessins.",
-        'l’aspirateur': "Le petit monstre bruyant qui avale toute la poussière de la maison.",
-        'déménager': "Ranger sa vie dans des cartons pour aller s'installer dans une nouvelle aventure.",
-        'emménager': "Déballer ses peluches et ses secrets dans sa nouvelle chambre toute neuve.",
-        'atteindre': "Tendre le bras très fort pour décrocher la plus haute pomme de l'arbre.",
-        'craindre': "Ce frisson qui arrive quand l'orage gronde ou que l'ombre est un peu trop grande.",
-        'résoudre': "Trouver la clé d'une énigme compliquée pour voir le sourire revenir.",
-        'se plaindre': "Laisser parler sa peine en chuchotant de petits mots tristes.",
-        'convaincre': "Partager ses arguments avec tant de passion que l'autre finit par dire oui.",
-        's’apercevoir de': "Remarquer soudain une petite coccinelle posée sur sa manche.",
-        'se débrouiller': "Trouver une idée astucieuse tout seul comme un grand.",
-        'avoir beau + inf.': "Essayer encore et encore sans réussir, mais avec beaucoup de courage.",
-        'valoir la peine': "Un effort qui coûte un peu mais qui apporte tellement de bonheur à la fin.",
-        'il s’agit de': "Le but secret du jeu, ce qu'on doit découvrir ensemble."
-      };
 
       const seed = [
         { fr: 'à gauche', en: 'to the left' },
@@ -587,10 +409,6 @@
           console.warn('Fallback storage active');
         }
 
-        state.cards.forEach(c => {
-          if (!c.desc) c.desc = cuteExplorations[c.fr] || DEFAULT_DESC;
-        });
-
         const have = new Set(state.cards.map(c => c.fr.trim().toLowerCase()));
         let added = false;
         seed.forEach(s => {
@@ -599,7 +417,6 @@
               id: uid(),
               fr: s.fr,
               en: s.en,
-              desc: cuteExplorations[s.fr] || DEFAULT_DESC,
               mastered: false
             });
             added = true;
@@ -631,17 +448,13 @@
         return state.cards.filter(c => !c.mastered);
       }
 
-      function mastered() {
-        return state.cards.filter(c => c.mastered);
-      }
-
       function toast(msg) {
         const t = $('toast');
         t.textContent = msg;
-        t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-24 bg-[#2C2830] text-white text-xs font-semibold px-6 py-3 rounded-full shadow-lg z-[9999] transition-all transform translate-y-0 opacity-100";
+        t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[#2C2830] text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-lg z-[9999] transition-all transform translate-y-0 opacity-100";
         clearTimeout(t._h);
         t._h = setTimeout(() => {
-          t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-24 bg-[#2C2830] text-white text-xs font-semibold px-6 py-3 rounded-full shadow-lg z-[9999] transition-all transform translate-y-4 opacity-0 pointer-events-none";
+          t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[#2C2830] text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-lg z-[9999] transition-all transform translate-y-4 opacity-0 pointer-events-none";
         }, 1800);
       }
 
@@ -651,12 +464,6 @@
           const j = Math.floor(Math.random() * (i + 1));
           [queue[i], queue[j]] = [queue[j], queue[i]];
         }
-      }
-
-      function updateProgress() {
-        const m = mastered().length;
-        $('deckCount').textContent = queue.length + (queue.length === 1 ? ' restant' : ' restants');
-        $('masteredCount').textContent = `${m} acquis`;
       }
 
       function getCardVisuals(id) {
@@ -672,23 +479,18 @@
 
       function renderDeck(initial) {
         flipped = false;
-        updateProgress();
 
         if (state.cards.length === 0) {
           deckEl.innerHTML = emptyHTML('☁︎', 'Aucune carte', 'Commencez à bâtir votre vocabulaire en ajoutant une carte.', 'goManage', 'Ajouter des cartes');
           hookEmpty();
-          toggleActions(false);
           return;
         }
 
         if (queue.length === 0) {
           deckEl.innerHTML = emptyHTML('✿', 'Tout est acquis !', 'Vous avez maîtrisé toutes vos cartes.', 'restart', 'Réviser à nouveau');
           hookEmpty();
-          toggleActions(false);
           return;
         }
-
-        toggleActions(true);
 
         if (initial) {
           deckEl.innerHTML = '';
@@ -711,7 +513,7 @@
           <div class="glyph text-5xl text-[#E38379] mb-4">${glyph}</div>
           <h2 class="font-serif font-semibold text-xl text-slate-800 mb-2">${title}</h2>
           <p class="text-xs text-slate-500 max-w-[220px] mb-6 leading-relaxed">${body}</p>
-          <button class="btn bg-[#2C2830] text-white text-xs font-semibold px-6 py-3 rounded-full hover:scale-105 transition-all" data-action="${action}">${label}</button>
+          <button class="btn bg-[#2C2830] text-white text-xs font-semibold px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all" data-action="${action}">${label}</button>
         </div>`;
       }
 
@@ -732,14 +534,6 @@
         });
       }
 
-      function toggleActions(on) {
-        const el = $('actions');
-        if (el) {
-          el.style.opacity = on ? '1' : '0.25';
-          el.style.pointerEvents = on ? 'auto' : 'none';
-        }
-      }
-
       function buildCard(c) {
         const el = document.createElement('div');
         el.dataset.id = c.id;
@@ -750,20 +544,19 @@
           <div class="stamp acquis">acquis</div>
           <div class="stamp revoir">à revoir</div>
           <div class="card-inner">
-            <div class="face front grid-${visuals.theme}">
-              <div class="spotlight">
-                <div class="word-banner theme-${visuals.theme}">
-                  <span class="font-serif text-lg md:text-xl font-semibold">${escapeHTML(c.fr)}</span>
-                </div>
-                <div class="illustration-text text-slate-600 font-sans text-xs px-2 leading-relaxed text-center max-w-[210px] mx-auto">
-                  ${escapeHTML(c.desc || DEFAULT_DESC)}
+            <!-- FRONT FACE: Pastel Exterior + Saturated Morphing Center Shape -->
+            <div class="face front theme-light-${visuals.theme}">
+              <div class="geo-shape ${visuals.shape} shape-saturated-${visuals.theme}">
+                <div class="font-serif font-bold text-2xl xs:text-3xl ipadmini:text-4xl text-white text-center leading-tight">
+                  ${escapeHTML(c.fr)}
                 </div>
               </div>
             </div>
             
+            <!-- BACK FACE: Saturated Exterior + Translucent Light Morphing Center Shape -->
             <div class="face back theme-${visuals.theme}">
               <div class="geo-shape ${visuals.shape}">
-                <div class="translation font-serif font-bold text-xl md:text-2xl text-white text-center leading-tight">
+                <div class="translation font-serif font-bold text-2xl xs:text-3xl ipadmini:text-4xl text-white text-center leading-tight">
                   ${escapeHTML(c.en)}
                 </div>
               </div>
@@ -856,7 +649,8 @@
         if (animating) return;
         animating = true;
 
-        el.querySelector('.stamp.' + (dir === 'right' ? 'acquis' : 'revoir')).style.opacity = 1;
+        const stamp = el.querySelector('.stamp.' + (dir === 'right' ? 'acquis' : 'revoir'));
+        if (stamp) stamp.style.opacity = 1;
         el.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s';
         
         if (dir === 'right') {
@@ -878,8 +672,6 @@
           queue = queue.filter(q => q !== id);
           queue.push(id);
         }
-
-        updateProgress();
 
         const cardsInDom = Array.from(deckEl.querySelectorAll('.fcard'));
         const cardB = cardsInDom[cardsInDom.length - 2];
@@ -931,25 +723,6 @@
       $('btnLeft').addEventListener('click', () => buttonSwipe('left'));
       $('btnFlip').addEventListener('click', () => flipCard());
 
-      $('btnToggleExamples').addEventListener('click', () => {
-        hideExamples = !hideExamples;
-        deckEl.classList.toggle('hide-examples', hideExamples);
-        
-        const eyeIcon = $('eyeIcon');
-        if (hideExamples) {
-          eyeIcon.innerHTML = `
-            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22"></path>
-          `;
-          toast('Exemples masqués');
-        } else {
-          eyeIcon.innerHTML = `
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          `;
-          toast('Exemples affichés');
-        }
-      });
-
       document.addEventListener('keydown', e => {
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
         if (e.key === 'ArrowRight') buttonSwipe('right');
@@ -962,7 +735,6 @@
 
       const inFr = $('inFr'),
             inEn = $('inEn'),
-            inDesc = $('inDesc'),
             btnAdd = $('btnAdd');
 
       function validate() {
@@ -972,8 +744,8 @@
       inFr.addEventListener('input', validate);
       inEn.addEventListener('input', validate);
 
-      [inFr, inEn, inDesc].forEach(i => i.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && !btnAdd.disabled) addCard();
+      [inFr, inEn].forEach(i => i.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !btnAdd.disabled) addCard();
       }));
 
       btnAdd.addEventListener('click', addCard);
@@ -983,7 +755,6 @@
           id: uid(),
           fr: inFr.value.trim(),
           en: inEn.value.trim(),
-          desc: inDesc.value.trim() || DEFAULT_DESC,
           mastered: false
         };
         state.cards.unshift(c);
@@ -992,11 +763,8 @@
 
         inFr.value = '';
         inEn.value = '';
-        inDesc.value = '';
         validate();
         inFr.focus();
-
-        updateProgress();
 
         if (deckEl.querySelector('.empty')) renderDeck(true);
         toast('Carte ajoutée !');
@@ -1005,15 +773,11 @@
       function switchTab(which) {
         const study = which === 'study';
         
-        // Dynamic classes based on screen size to preserve optimal touch surfaces
-        const activeClassMobile = 'px-6 py-2 md:px-5 md:py-1.5 text-xs font-semibold rounded-full transition-all bg-slate-800 text-white md:bg-white md:!text-slate-800 md:shadow-sm';
-        const inactiveClassMobile = 'px-5 py-2 md:px-5 md:py-1.5 text-xs font-semibold rounded-full transition-all text-slate-500';
+        const activeClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all bg-slate-900 text-white shadow-xs';
+        const inactiveClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all text-slate-500 hover:text-slate-800';
         
-        $('tabStudy').className = study ? activeClassMobile : inactiveClassMobile;
-        $('tabManage').className = !study ? activeClassMobile : inactiveClassMobile;
-        
-        $('btnToggleExamples').style.display = study ? 'flex' : 'none';
-        $('navDivider').style.display = study ? 'block' : 'none';
+        $('tabStudy').className = study ? activeClass : inactiveClass;
+        $('tabManage').className = !study ? activeClass : inactiveClass;
         
         if (study) {
           $('viewStudy').classList.add('flex');
