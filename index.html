@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <title>Cartes · Minimalist French Flashcards</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <script>
     tailwind.config = {
       theme: {
@@ -31,41 +31,191 @@
   </script>
 
   <style>
-    :root {
+    /* ============ THEME PRESETS ============ */
+    :root, [data-theme="doux"] {
       --app-bg: #F2ECE4;
       --paper: #FAF8F4;
       --ink: #2C2830;
       --ink-soft: #635E6A;
-      
-      /* Vibrant Theme Saturated Colors */
+
       --theme-blue-sat: #4C599E;
       --theme-orange-sat: #E2A648;
       --theme-sage-sat: #6F947B;
       --theme-rose-sat: #C97782;
 
-      /* Pastel Light Exterior Colors */
       --theme-blue-light: #EEF1F8;
       --theme-orange-light: #FDF5E6;
       --theme-sage-light: #EFF5F0;
       --theme-rose-light: #FAEEEE;
-
-      /* Translucent Blob Backgrounds for Back Faces */
-      --blob-translucent: rgba(255, 255, 255, 0.22);
-
-      --shadow-sm: 0 4px 12px rgba(44, 40, 48, 0.05);
-      --shadow-md: 0 12px 36px rgba(44, 40, 48, 0.12);
     }
+
+    [data-theme="nuit"] {
+      --app-bg: #17151E;
+      --paper: #221F2B;
+      --ink: #F1ECF7;
+      --ink-soft: #A79FBC;
+
+      --theme-blue-sat: #8B9AF0;
+      --theme-orange-sat: #E8B563;
+      --theme-sage-sat: #7FB08C;
+      --theme-rose-sat: #DD8A96;
+
+      --theme-blue-light: #262A42;
+      --theme-orange-light: #362C1E;
+      --theme-sage-light: #212C24;
+      --theme-rose-light: #34222A;
+    }
+
+    [data-theme="vif"] {
+      --app-bg: #FFF3E4;
+      --paper: #FFFDF8;
+      --ink: #241C1B;
+      --ink-soft: #7A6558;
+
+      --theme-blue-sat: #2D6FE0;
+      --theme-orange-sat: #FF7A3D;
+      --theme-sage-sat: #0FA98A;
+      --theme-rose-sat: #E4407A;
+
+      --theme-blue-light: #E3EEFF;
+      --theme-orange-light: #FFEDE0;
+      --theme-sage-light: #E1FBF3;
+      --theme-rose-light: #FFE3EE;
+    }
+
+    --shadow-md-val: 0 12px 36px rgba(44, 40, 48, 0.12);
 
     body {
       background-color: var(--app-bg);
       color: var(--ink);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
-      transition: background-color 0.3s ease;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
+      transition: background-color 0.4s ease, color 0.4s ease;
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
+    }
+
+    /* ============ HEADER (auto-hide overlay) ============ */
+    .app-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: color-mix(in srgb, var(--paper) 86%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+      transform: translateY(-100%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .app-header.visible {
+      transform: translateY(0);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      color: var(--ink-soft);
+      border: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+    .icon-btn:active { transform: scale(0.9); }
+
+    /* plain icon button, no background container */
+    .icon-btn-plain {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--ink-soft);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+    .icon-btn-plain:active { transform: scale(0.88); }
+
+    .lang-toggle-btn {
+      height: 38px;
+      padding: 0 13px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      color: var(--ink-soft);
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+    .lang-toggle-btn:active { transform: scale(0.92); }
+
+    /* ============ PROGRESS PILL ============ */
+    .progress-pill {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-soft);
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      backdrop-filter: blur(10px);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      transition: color 0.3s ease, background 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ============ MAIN STAGE ============ */
+    .main-stage {
+      height: 100dvh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(18px, 4vh, 34px);
+      padding: 16px;
+      padding-top: calc(16px + env(safe-area-inset-top));
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+
+    #deckWrap {
+      transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mainStage.buttons-hidden #deckWrap {
+      height: 82vh;
+      max-height: 780px;
     }
 
     .fcard {
@@ -98,47 +248,36 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      box-shadow: var(--shadow-md);
-      border: 6px solid #FFFFFF;
+      box-shadow: var(--shadow-md-val);
+      border: 6px solid var(--paper);
+      transition: border-color 0.4s ease;
     }
 
-    .face.front {
-      transform: rotateY(0deg);
-      z-index: 2;
-    }
+    .face.front { transform: rotateY(0deg); z-index: 2; }
+    .face.back { transform: rotateY(180deg); z-index: 1; }
 
-    .face.back {
-      transform: rotateY(180deg);
-      z-index: 1;
-    }
-
-    /* BACK FACE: Saturated Backgrounds */
     .theme-blue { background-color: var(--theme-blue-sat); }
     .theme-orange { background-color: var(--theme-orange-sat); }
     .theme-sage { background-color: var(--theme-sage-sat); }
     .theme-rose { background-color: var(--theme-rose-sat); }
 
-    /* FRONT FACE: Light Pastel Backgrounds */
     .theme-light-blue { background-color: var(--theme-blue-light); }
     .theme-light-orange { background-color: var(--theme-orange-light); }
     .theme-light-sage { background-color: var(--theme-sage-light); }
     .theme-light-rose { background-color: var(--theme-rose-light); }
 
-    /* FRONT FACE: Saturated Center Blob Fills */
     .shape-saturated-blue { background-color: var(--theme-blue-sat) !important; }
     .shape-saturated-orange { background-color: var(--theme-orange-sat) !important; }
     .shape-saturated-sage { background-color: var(--theme-sage-sat) !important; }
     .shape-saturated-rose { background-color: var(--theme-rose-sat) !important; }
 
-    /* BACK FACE: Translucent Blob Fills */
     .face.back .geo-shape {
-      background-color: var(--blob-translucent);
+      background-color: rgba(255, 255, 255, 0.22);
     }
 
-    /* Morphing Organic Shape Container */
     .geo-shape {
-      width: 220px;
-      height: 220px;
+      width: clamp(210px, 58vw, 300px);
+      height: clamp(210px, 58vw, 300px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -148,18 +287,10 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
     }
 
-    .geo-shape.shape-1 {
-      border-radius: 54% 46% 62% 38% / 44% 56% 44% 56%;
-    }
-    .geo-shape.shape-2 {
-      border-radius: 38% 62% 42% 58% / 52% 38% 62% 48%;
-    }
-    .geo-shape.shape-3 {
-      border-radius: 48% 52% 32% 68% / 42% 68% 32% 58%;
-    }
-    .geo-shape.shape-4 {
-      border-radius: 62% 38% 48% 52% / 58% 32% 68% 42%;
-    }
+    .geo-shape.shape-1 { border-radius: 54% 46% 62% 38% / 44% 56% 44% 56%; }
+    .geo-shape.shape-2 { border-radius: 38% 62% 42% 58% / 52% 38% 62% 48%; }
+    .geo-shape.shape-3 { border-radius: 48% 52% 32% 68% / 42% 68% 32% 58%; }
+    .geo-shape.shape-4 { border-radius: 62% 38% 48% 52% / 58% 32% 68% 42%; }
 
     @keyframes morphingBlob {
       0% { transform: scale(1) rotate(0deg); }
@@ -173,7 +304,6 @@
       z-index: 10;
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
     }
-
     .fcard.behind2 {
       transform: scale(0.9) translateY(28px) rotate(1deg);
       opacity: 0.4;
@@ -181,11 +311,9 @@
       z-index: 5;
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
     }
-
     .fcard.entering {
       animation: cardEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     @keyframes cardEnter {
       from { transform: scale(0.92) translateY(20px); opacity: 0; }
       to { transform: none; opacity: 1; }
@@ -206,18 +334,9 @@
       z-index: 30;
       transition: opacity 0.1s ease;
     }
-    .stamp.acquis {
-      right: 24px;
-      color: #1E4620;
-      background-color: #E2F3E5;
-    }
-    .stamp.revoir {
-      left: 24px;
-      color: #611D24;
-      background-color: #FCE8E9;
-    }
+    .stamp.acquis { right: 24px; color: #1E4620; background-color: #E2F3E5; }
+    .stamp.revoir { left: 24px; color: #611D24; background-color: #FCE8E9; }
 
-    /* Tactile Control Buttons */
     .tactile-btn {
       border-radius: 9999px;
       display: flex;
@@ -225,139 +344,309 @@
       justify-content: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 4px 12px rgba(44, 40, 48, 0.06);
-      background-color: #FFFFFF;
+      background-color: var(--paper);
       touch-action: manipulation;
     }
+    .tactile-btn:active { transform: scale(0.92); box-shadow: 0 2px 6px rgba(44, 40, 48, 0.03); }
 
-    .tactile-btn:active {
-      transform: scale(0.92);
-      box-shadow: 0 2px 6px rgba(44, 40, 48, 0.03);
+    .btn-revoir { background-color: #FDF4F5; color: #D48A93; border: 1.5px solid rgba(212, 138, 147, 0.22); }
+    .btn-flip { background-color: var(--paper); color: var(--ink-soft); border: 1.5px solid color-mix(in srgb, var(--ink) 12%, transparent); }
+    .btn-acquis { background-color: #F1F7F3; color: #87A691; border: 1.5px solid rgba(135, 166, 145, 0.22); }
+
+    /* ============ BOTTOM SHEETS ============ */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(10, 8, 14, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .sheet-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+    .bottom-sheet {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 70;
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 28px 28px 0 0;
+      box-shadow: 0 -12px 40px rgba(0,0,0,0.15);
+      padding: 10px 22px calc(26px + env(safe-area-inset-bottom));
+      max-height: 82vh;
+      overflow-y: auto;
+      transform: translateY(110%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bottom-sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4.5px;
+      border-radius: 99px;
+      background: color-mix(in srgb, var(--ink) 15%, transparent);
+      margin: 10px auto 18px;
     }
 
-    .btn-revoir {
-      background-color: #FDF4F5;
-      color: #D48A93;
-      border: 1.5px solid rgba(212, 138, 147, 0.22);
+    .sheet-input {
+      width: 100%;
+      font-size: 13px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      color: var(--ink);
+      border: 0;
+      outline: none;
+    }
+    .sheet-input:focus {
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-blue-sat) 55%, transparent);
+    }
+    .sheet-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .sheet-primary-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 14px;
+      transition: all 0.15s ease;
+    }
+    .sheet-primary-btn:active { transform: scale(0.97); }
+    .sheet-primary-btn:disabled { opacity: 0.35; }
+    .sheet-secondary-btn {
+      flex: 1;
+      padding: 11px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      color: var(--ink);
+      transition: all 0.15s ease;
+    }
+    .sheet-secondary-btn:active { transform: scale(0.96); }
+    .sheet-divider {
+      height: 1px;
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      margin: 20px 0;
     }
 
-    .btn-flip {
-      background-color: #FFFFFF;
-      color: #635E6A;
-      border: 1.5px solid rgba(99, 94, 106, 0.15);
+    .theme-swatch {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border-radius: 16px;
+      border: 1.5px solid color-mix(in srgb, var(--ink) 10%, transparent);
+      transition: all 0.15s ease;
     }
+    .theme-swatch.active {
+      border-color: var(--ink);
+      background: color-mix(in srgb, var(--ink) 5%, transparent);
+    }
+    .theme-swatch:active { transform: scale(0.96); }
+    .swatch-dots { display: flex; gap: 3px; }
+    .swatch-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+    .theme-swatch-label { font-size: 11px; font-weight: 600; color: var(--ink); }
 
-    .btn-acquis {
-      background-color: #F1F7F3;
-      color: #87A691;
-      border: 1.5px solid rgba(135, 166, 145, 0.22);
+    .switch { position: relative; display: inline-block; width: 42px; height: 25px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-track {
+      position: absolute; inset: 0; cursor: pointer;
+      background: color-mix(in srgb, var(--ink) 18%, transparent);
+      border-radius: 99px;
+      transition: background 0.2s ease;
+    }
+    .switch-track::before {
+      content: "";
+      position: absolute;
+      width: 19px; height: 19px;
+      left: 3px; top: 3px;
+      background: var(--paper);
+      border-radius: 50%;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .switch input:checked + .switch-track { background: var(--ink); }
+    .switch input:checked + .switch-track::before { transform: translateX(17px); }
+
+    .sheet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .sheet-row-label { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .sheet-row-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+    .toast {
+      font-family: 'Outfit', sans-serif;
     }
   </style>
 </head>
 
-<body class="h-dvh w-screen flex flex-col items-center justify-between p-3 xs:p-4 ipadmini:p-6 select-none overflow-hidden relative">
+<body class="h-dvh w-screen relative select-none overflow-hidden">
 
-  <header class="w-full max-w-[340px] xs:max-w-[380px] ipadmini:max-w-[600px] ipad:max-w-[850px] flex items-center justify-between py-2 z-20 shrink-0 gap-2">
-    <!-- Brand Logo -->
-    <div class="brand font-serif font-semibold text-xl xs:text-2xl text-slate-800 tracking-tight flex items-center gap-1.5 select-none shrink-0">
+  <!-- Progress pill (always visible, unobtrusive) -->
+  <div id="progressPill" class="progress-pill">0 cards</div>
+
+  <!-- Auto-hiding header -->
+  <header id="appHeader" class="app-header">
+    <div class="brand font-serif font-semibold text-xl tracking-tight flex items-center gap-1.5 select-none shrink-0" style="color: var(--ink);">
       Car<em>tes</em>
       <span class="w-1.5 h-1.5 rounded-full bg-[#E38379]"></span>
     </div>
-
-    <!-- Header Navigation Switcher -->
-    <nav class="flex items-center bg-white/80 backdrop-blur-md p-1 rounded-full border border-slate-200/70 shadow-xs gap-0.5 shrink-0">
-      <button id="tabStudy" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all bg-slate-900 text-white shadow-xs">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="6" width="14" height="12" rx="2"></rect>
-          <path d="M6 4h14a2 2 0 0 1 2 2v10"></path>
+    <div class="header-actions">
+      <button id="btnCustomize" aria-label="Customize" class="icon-btn-plain">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="4" x2="6" y2="20"></line>
+          <line x1="12" y1="4" x2="12" y2="20"></line>
+          <line x1="18" y1="4" x2="18" y2="20"></line>
+          <circle cx="6" cy="9" r="2.2" fill="var(--paper)" stroke="currentColor" stroke-width="2"></circle>
+          <circle cx="12" cy="15" r="2.2" fill="var(--paper)" stroke="currentColor" stroke-width="2"></circle>
+          <circle cx="18" cy="7" r="2.2" fill="var(--paper)" stroke="currentColor" stroke-width="2"></circle>
         </svg>
-        <span>Étudier</span>
       </button>
-
-      <button id="tabManage" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all text-slate-500 hover:text-slate-800">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <button id="btnLangToggle" aria-label="Toggle study direction" class="lang-toggle-btn">
+        <span id="langToggleLabel">FR→EN</span>
+      </button>
+      <button id="btnOpenAdd" aria-label="Add a card" class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 5v14M5 12h14"/>
         </svg>
-        <span>Ajouter</span>
       </button>
-    </nav>
+    </div>
   </header>
 
-  <main class="w-full max-w-[340px] xs:max-w-[380px] ipadmini:max-w-[600px] ipad:max-w-[850px] flex-grow flex flex-col justify-center overflow-visible py-1 xs:py-2">
-    
-    <!-- STUDY VIEW -->
-    <section id="viewStudy" class="w-full h-full flex flex-col justify-between items-center overflow-visible">
-      
-      <!-- Card Stack Canvas -->
-      <div class="relative w-full max-w-[280px] xs:max-w-[320px] ipadmini:max-w-[380px] ipad:max-w-[420px] aspect-[3/4] h-[50vh] xs:h-[54vh] ipadmini:h-[56vh] max-h-[460px] flex-grow mx-auto my-auto overflow-visible flex items-center justify-center">
-        <div id="deck" class="relative w-full h-full overflow-visible">
-          <!-- Dynamic card injections -->
-        </div>
-      </div>
+  <!-- Main study stage -->
+  <main id="mainStage" class="main-stage">
+    <div id="deckWrap" class="relative w-full max-w-[340px] xs:max-w-[400px] ipadmini:max-w-[460px] ipad:max-w-[500px] aspect-[3/4] h-[62vh] xs:h-[66vh] ipadmini:h-[68vh] max-h-[600px] overflow-visible flex items-center justify-center">
+      <div id="deck" class="relative w-full h-full overflow-visible"></div>
+    </div>
 
-      <!-- Action Buttons Block -->
-      <div class="shrink-0 flex items-center justify-center gap-5 xs:gap-6 my-2 ipadmini:my-4">
-        <button id="btnLeft" aria-label="À revoir" class="tactile-btn btn-revoir w-[52px] h-[52px] xs:w-[58px] xs:h-[58px] ipadmini:w-[62px] ipadmini:h-[62px]">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <path d="M1 4v6h6" />
-            <path d="M3.5 15a9 9 0 1 0 2-9.7L1 10" />
-          </svg>
-        </button>
-        
-        <button id="btnFlip" aria-label="Retourner la carte" class="tactile-btn btn-flip w-[44px] h-[44px] xs:w-[48px] xs:h-[48px] ipadmini:w-[52px] ipadmini:h-[52px]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 2l4 4-4 4" />
-            <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-            <path d="M7 22l-4-4 4-4" />
-            <path d="M21 13v1a4 4 0 0 1-4 4H3" />
-          </svg>
-        </button>
-        
-        <button id="btnRight" aria-label="Acquis" class="tactile-btn btn-acquis w-[52px] h-[52px] xs:w-[58px] xs:h-[58px] ipadmini:w-[62px] ipadmini:h-[62px]">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-        </button>
-      </div>
-    </section>
+    <div id="actionButtons" class="shrink-0 flex items-center justify-center gap-5 xs:gap-6">
+      <button id="btnLeft" aria-label="Needs review" class="tactile-btn btn-revoir w-[54px] h-[54px] xs:w-[60px] xs:h-[60px] ipadmini:w-[64px] ipadmini:h-[64px]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M1 4v6h6" />
+          <path d="M3.5 15a9 9 0 1 0 2-9.7L1 10" />
+        </svg>
+      </button>
 
-    <!-- CARD CREATOR VIEW -->
-    <section id="viewManage" class="hidden w-full h-full flex-col justify-center items-center overflow-visible my-auto">
-      <div class="bg-white rounded-[28px] ipadmini:rounded-[36px] p-5 xs:p-6 shadow-md w-full max-w-[320px] xs:max-w-[340px] ipadmini:max-w-[420px] mx-auto">
-        <h3 class="font-serif font-semibold text-base ipadmini:text-xl text-slate-800 mb-4 text-center">Nouvelle carte</h3>
-        
-        <div class="space-y-3 mb-5">
-          <div>
-            <label class="text-[9px] ipadmini:text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Français</label>
-            <input id="inFr" placeholder="ex: Fier" class="w-full text-xs ipadmini:text-sm rounded-xl px-3.5 py-2.5 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
-          </div>
-          <div>
-            <label class="text-[9px] ipadmini:text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">English</label>
-            <input id="inEn" placeholder="ex: Proud" class="w-full text-xs ipadmini:text-sm rounded-xl px-3.5 py-2.5 bg-slate-100 border-0 focus:ring-2 focus:ring-[#4C599E] outline-none text-slate-800" autocomplete="off">
-          </div>
-        </div>
+      <button id="btnFlip" aria-label="Flip card" class="tactile-btn btn-flip w-[46px] h-[46px] xs:w-[50px] xs:h-[50px] ipadmini:w-[54px] ipadmini:h-[54px]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 2l4 4-4 4" />
+          <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
+          <path d="M7 22l-4-4 4-4" />
+          <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+        </svg>
+      </button>
 
-        <button id="btnAdd" disabled class="w-full py-3 bg-[#2C2830] text-white text-xs ipadmini:text-sm font-semibold rounded-xl hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-35 disabled:cursor-not-allowed">
-          Ajouter au jeu
-        </button>
-      </div>
-    </section>
-
+      <button id="btnRight" aria-label="Mastered" class="tactile-btn btn-acquis w-[54px] h-[54px] xs:w-[60px] xs:h-[60px] ipadmini:w-[64px] ipadmini:h-[64px]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      </button>
+    </div>
   </main>
 
-  <!-- Notification Toast -->
+  <!-- Shared backdrop for sheets -->
+  <div id="sheetBackdrop" class="sheet-backdrop"></div>
+
+  <!-- Add / Import / Export sheet -->
+  <div id="addSheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h3 class="font-serif font-semibold text-lg text-center mb-5" style="color: var(--ink);">New card</h3>
+
+    <div class="space-y-3 mb-4">
+      <div>
+        <label class="sheet-label">French</label>
+        <input id="inFr" placeholder="e.g. Fier" class="sheet-input" autocomplete="off">
+      </div>
+      <div>
+        <label class="sheet-label">English</label>
+        <input id="inEn" placeholder="e.g. Proud" class="sheet-input" autocomplete="off">
+      </div>
+    </div>
+
+    <button id="btnAdd" disabled class="sheet-primary-btn">Add to deck</button>
+
+    <div class="sheet-divider"></div>
+
+    <label class="sheet-label">Import / Export (JSON)</label>
+    <p class="text-xs mb-3" style="color: var(--ink-soft);">A list of French / English pairs.</p>
+    <div class="flex gap-3">
+      <button id="btnImport" class="sheet-secondary-btn">Import</button>
+      <button id="btnExport" class="sheet-secondary-btn">Export</button>
+    </div>
+    <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+  </div>
+
+  <!-- Customize sheet -->
+  <div id="customizeSheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h3 class="font-serif font-semibold text-lg text-center mb-5" style="color: var(--ink);">Customize</h3>
+
+    <label class="sheet-label">Theme</label>
+    <div class="flex gap-3 mb-6">
+      <button class="theme-swatch" data-theme="doux">
+        <span class="swatch-dots">
+          <span style="background:#4C599E"></span><span style="background:#E2A648"></span><span style="background:#6F947B"></span><span style="background:#C97782"></span>
+        </span>
+        <span class="theme-swatch-label">Soft</span>
+      </button>
+      <button class="theme-swatch" data-theme="nuit">
+        <span class="swatch-dots">
+          <span style="background:#8B9AF0"></span><span style="background:#E8B563"></span><span style="background:#7FB08C"></span><span style="background:#DD8A96"></span>
+        </span>
+        <span class="theme-swatch-label">Night</span>
+      </button>
+      <button class="theme-swatch" data-theme="vif">
+        <span class="swatch-dots">
+          <span style="background:#2D6FE0"></span><span style="background:#FF7A3D"></span><span style="background:#0FA98A"></span><span style="background:#E4407A"></span>
+        </span>
+        <span class="theme-swatch-label">Bold</span>
+      </button>
+    </div>
+
+    <div class="sheet-divider"></div>
+
+    <div class="sheet-row">
+      <div>
+        <div class="sheet-row-label">Action buttons</div>
+        <div class="sheet-row-sub">Show the ✕ / ✓ / flip buttons under the card</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggleButtons" checked>
+        <span class="switch-track"></span>
+      </label>
+    </div>
+    <p class="text-xs mt-3" style="color: var(--ink-soft);">Swiping and tapping the card still work even when the buttons are hidden.</p>
+  </div>
+
   <div id="toast" class="toast"></div>
 
   <script>
     (() => {
       'use strict';
-      
-      const KEY = 'cartes-deck-v5';
-      
+
+      const KEY = 'cartes-deck-v6';
+
       function uid() {
         return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       }
-      
-      let state = { cards: [] };
+
+      let state = { cards: [], settings: { theme: 'doux', showButtons: true, frontLang: 'fr' } };
       let queue = [];
       let flipped = false;
       let animating = false;
@@ -403,7 +692,9 @@
         try {
           const res = await getStorage().get(KEY);
           if (res && res.value) {
-            state = JSON.parse(res.value);
+            const parsed = JSON.parse(res.value);
+            state.cards = parsed.cards || [];
+            state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, parsed.settings || {});
           }
         } catch (e) {
           console.warn('Fallback storage active');
@@ -413,12 +704,7 @@
         let added = false;
         seed.forEach(s => {
           if (!have.has(s.fr.trim().toLowerCase())) {
-            state.cards.push({
-              id: uid(),
-              fr: s.fr,
-              en: s.en,
-              mastered: false
-            });
+            state.cards.push({ id: uid(), fr: s.fr, en: s.en, mastered: false });
             added = true;
           }
         });
@@ -439,14 +725,15 @@
 
       const $ = id => document.getElementById(id);
       const deckEl = $('deck');
+      const appHeader = $('appHeader');
+      const mainStage = $('mainStage');
+      const progressPill = $('progressPill');
+      const sheetBackdrop = $('sheetBackdrop');
+      const addSheet = $('addSheet');
+      const customizeSheet = $('customizeSheet');
 
-      function cardById(id) {
-        return state.cards.find(c => c.id === id);
-      }
-
-      function learning() {
-        return state.cards.filter(c => !c.mastered);
-      }
+      function cardById(id) { return state.cards.find(c => c.id === id); }
+      function learning() { return state.cards.filter(c => !c.mastered); }
 
       function toast(msg) {
         const t = $('toast');
@@ -458,6 +745,30 @@
         }, 1800);
       }
 
+      /* ============ HEADER AUTO-HIDE ============ */
+      let hideTimer = null;
+      function showHeader() {
+        appHeader.classList.add('visible');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 3200);
+      }
+      document.addEventListener('pointerdown', showHeader, { passive: true });
+      appHeader.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+      appHeader.addEventListener('pointerleave', () => {
+        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 1400);
+      });
+      setTimeout(showHeader, 250);
+
+      /* ============ PROGRESS PILL ============ */
+      function updateProgress() {
+        const total = state.cards.length;
+        if (total === 0) { progressPill.textContent = 'No cards'; return; }
+        const mastered = state.cards.filter(c => c.mastered).length;
+        const remaining = total - mastered;
+        progressPill.textContent = `${mastered} mastered · ${remaining} learning`;
+      }
+
+      /* ============ DECK RENDERING ============ */
       function rebuildQueue() {
         queue = learning().map(c => c.id);
         for (let i = queue.length - 1; i > 0; i--) {
@@ -468,26 +779,22 @@
 
       function getCardVisuals(id) {
         let code = 0;
-        for (let i = 0; i < id.length; i++) {
-          code += id.charCodeAt(i);
-        }
-        return {
-          theme: THEMES[code % THEMES.length],
-          shape: SHAPES[(code + 2) % SHAPES.length]
-        };
+        for (let i = 0; i < id.length; i++) code += id.charCodeAt(i);
+        return { theme: THEMES[code % THEMES.length], shape: SHAPES[(code + 2) % SHAPES.length] };
       }
 
       function renderDeck(initial) {
         flipped = false;
+        updateProgress();
 
         if (state.cards.length === 0) {
-          deckEl.innerHTML = emptyHTML('☁︎', 'Aucune carte', 'Commencez à bâtir votre vocabulaire en ajoutant une carte.', 'goManage', 'Ajouter des cartes');
+          deckEl.innerHTML = emptyHTML('☁︎', 'No cards yet', 'Start building your vocabulary by adding a card.', 'openAdd', 'Add cards');
           hookEmpty();
           return;
         }
 
         if (queue.length === 0) {
-          deckEl.innerHTML = emptyHTML('✿', 'Tout est acquis !', 'Vous avez maîtrisé toutes vos cartes.', 'restart', 'Réviser à nouveau');
+          deckEl.innerHTML = emptyHTML('✿', 'All mastered!', "You've mastered every card.", 'restart', 'Study again');
           hookEmpty();
           return;
         }
@@ -509,11 +816,11 @@
       }
 
       function emptyHTML(glyph, title, body, action, label) {
-        return `<div class="empty flex flex-col items-center justify-center text-center p-6 bg-white rounded-[32px] shadow-lg w-full h-full">
+        return `<div class="empty flex flex-col items-center justify-center text-center p-6 rounded-[32px] shadow-lg w-full h-full" style="background:var(--paper);">
           <div class="glyph text-5xl text-[#E38379] mb-4">${glyph}</div>
-          <h2 class="font-serif font-semibold text-xl text-slate-800 mb-2">${title}</h2>
-          <p class="text-xs text-slate-500 max-w-[220px] mb-6 leading-relaxed">${body}</p>
-          <button class="btn bg-[#2C2830] text-white text-xs font-semibold px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all" data-action="${action}">${label}</button>
+          <h2 class="font-serif font-semibold text-xl mb-2" style="color:var(--ink);">${title}</h2>
+          <p class="text-xs max-w-[220px] mb-6 leading-relaxed" style="color:var(--ink-soft);">${body}</p>
+          <button class="btn text-xs font-semibold px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all" style="background:var(--ink); color:var(--paper);" data-action="${action}">${label}</button>
         </div>`;
       }
 
@@ -521,12 +828,10 @@
         const b = deckEl.querySelector('[data-action]');
         if (!b) return;
         b.addEventListener('click', () => {
-          if (b.dataset.action === 'goManage') {
-            switchTab('manage');
+          if (b.dataset.action === 'openAdd') {
+            openSheet(addSheet);
           } else {
-            state.cards.forEach(c => {
-              c.mastered = false;
-            });
+            state.cards.forEach(c => { c.mastered = false; });
             persist();
             rebuildQueue();
             renderDeck(true);
@@ -537,27 +842,25 @@
       function buildCard(c) {
         const el = document.createElement('div');
         el.dataset.id = c.id;
-
         const visuals = getCardVisuals(c.id);
+        const frontText = state.settings.frontLang === 'fr' ? c.fr : c.en;
+        const backText = state.settings.frontLang === 'fr' ? c.en : c.fr;
 
         el.innerHTML = `
-          <div class="stamp acquis">acquis</div>
-          <div class="stamp revoir">à revoir</div>
+          <div class="stamp acquis">mastered</div>
+          <div class="stamp revoir">review</div>
           <div class="card-inner">
-            <!-- FRONT FACE: Pastel Exterior + Saturated Morphing Center Shape -->
             <div class="face front theme-light-${visuals.theme}">
               <div class="geo-shape ${visuals.shape} shape-saturated-${visuals.theme}">
-                <div class="font-serif font-bold text-2xl xs:text-3xl ipadmini:text-4xl text-white text-center leading-tight">
-                  ${escapeHTML(c.fr)}
+                <div class="font-serif font-bold text-3xl xs:text-4xl ipadmini:text-5xl text-white text-center leading-tight">
+                  ${escapeHTML(frontText)}
                 </div>
               </div>
             </div>
-            
-            <!-- BACK FACE: Saturated Exterior + Translucent Light Morphing Center Shape -->
             <div class="face back theme-${visuals.theme}">
               <div class="geo-shape ${visuals.shape}">
-                <div class="translation font-serif font-bold text-2xl xs:text-3xl ipadmini:text-4xl text-white text-center leading-tight">
-                  ${escapeHTML(c.en)}
+                <div class="translation font-serif font-bold text-3xl xs:text-4xl ipadmini:text-5xl text-white text-center leading-tight">
+                  ${escapeHTML(backText)}
                 </div>
               </div>
             </div>
@@ -566,13 +869,7 @@
       }
 
       function escapeHTML(s) {
-        return s.replace(/[&<>"']/g, m => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        }[m]));
+        return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
       }
 
       function attachDrag(el) {
@@ -597,32 +894,23 @@
           if (!dragging) return;
           dx = e.clientX - startX;
           dy = e.clientY - startY;
-
           if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
 
           const rot = dx * 0.05;
           el.style.transform = `translate(${dx}px, ${dy * 0.3}px) rotate(${rot}deg)`;
-          
+
           const progress = Math.min(Math.abs(dx) / 100, 1);
-          if (dx > 0) {
-            stampA.style.opacity = progress;
-            stampR.style.opacity = 0;
-          } else {
-            stampR.style.opacity = progress;
-            stampA.style.opacity = 0;
-          }
+          if (dx > 0) { stampA.style.opacity = progress; stampR.style.opacity = 0; }
+          else { stampR.style.opacity = progress; stampA.style.opacity = 0; }
         };
 
         const up = () => {
           if (!dragging) return;
           dragging = false;
-
           const threshold = Math.min(deckEl.offsetWidth * 0.32, 110);
-          if (dx > threshold) {
-            fly(el, 'right');
-          } else if (dx < -threshold) {
-            fly(el, 'left');
-          } else {
+          if (dx > threshold) fly(el, 'right');
+          else if (dx < -threshold) fly(el, 'left');
+          else {
             el.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2)';
             el.style.transform = '';
             stampA.style.opacity = 0;
@@ -652,26 +940,21 @@
         const stamp = el.querySelector('.stamp.' + (dir === 'right' ? 'acquis' : 'revoir'));
         if (stamp) stamp.style.opacity = 1;
         el.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s';
-        
-        if (dir === 'right') {
-          el.style.transform = 'translate(180vw, -10dvh) rotate(32deg)';
-        } else {
-          el.style.transform = 'translate(-180vw, -10dvh) rotate(-32deg)';
-        }
+
+        if (dir === 'right') el.style.transform = 'translate(180vw, -10dvh) rotate(32deg)';
+        else el.style.transform = 'translate(-180vw, -10dvh) rotate(-32deg)';
         el.style.opacity = '0';
-        
+
         const id = el.dataset.id;
         if (dir === 'right') {
           const c = cardById(id);
-          if (c) {
-            c.mastered = true;
-            persist();
-          }
+          if (c) { c.mastered = true; persist(); }
           queue = queue.filter(q => q !== id);
         } else {
           queue = queue.filter(q => q !== id);
           queue.push(id);
         }
+        updateProgress();
 
         const cardsInDom = Array.from(deckEl.querySelectorAll('.fcard'));
         const cardB = cardsInDom[cardsInDom.length - 2];
@@ -683,7 +966,6 @@
           cardB.style.opacity = '';
           attachDrag(cardB);
         }
-        
         if (cardC) {
           cardC.className = 'fcard absolute inset-0 rounded-[32px] behind';
           cardC.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s';
@@ -692,8 +974,7 @@
 
         const nextSlice = queue.slice(0, 3);
         if (nextSlice.length >= 3) {
-          const newCardId = nextSlice[2];
-          const newCardData = cardById(newCardId);
+          const newCardData = cardById(nextSlice[2]);
           if (newCardData) {
             const newEl = buildCard(newCardData);
             newEl.className = 'fcard absolute inset-0 rounded-[32px] behind2';
@@ -705,10 +986,7 @@
           el.remove();
           animating = false;
           flipped = false;
-          
-          if (queue.length === 0 || state.cards.length === 0) {
-            renderDeck(true);
-          }
+          if (queue.length === 0 || state.cards.length === 0) renderDeck(true);
         }, 300);
       }
 
@@ -727,75 +1005,129 @@
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
         if (e.key === 'ArrowRight') buttonSwipe('right');
         if (e.key === 'ArrowLeft') buttonSwipe('left');
-        if (e.key === ' ') {
-          e.preventDefault();
-          flipCard();
-        }
+        if (e.key === ' ') { e.preventDefault(); flipCard(); }
       });
 
-      const inFr = $('inFr'),
-            inEn = $('inEn'),
-            btnAdd = $('btnAdd');
+      /* ============ ADD CARD ============ */
+      const inFr = $('inFr'), inEn = $('inEn'), btnAdd = $('btnAdd');
 
-      function validate() {
-        btnAdd.disabled = !(inFr.value.trim() && inEn.value.trim());
-      }
-
+      function validate() { btnAdd.disabled = !(inFr.value.trim() && inEn.value.trim()); }
       inFr.addEventListener('input', validate);
       inEn.addEventListener('input', validate);
-
       [inFr, inEn].forEach(i => i.addEventListener('keydown', e => {
         if (e.key === 'Enter' && !btnAdd.disabled) addCard();
       }));
-
       btnAdd.addEventListener('click', addCard);
 
       function addCard() {
-        const c = {
-          id: uid(),
-          fr: inFr.value.trim(),
-          en: inEn.value.trim(),
-          mastered: false
-        };
+        const c = { id: uid(), fr: inFr.value.trim(), en: inEn.value.trim(), mastered: false };
         state.cards.unshift(c);
         queue.unshift(c.id);
         persist();
-
-        inFr.value = '';
-        inEn.value = '';
+        inFr.value = ''; inEn.value = '';
         validate();
         inFr.focus();
-
         if (deckEl.querySelector('.empty')) renderDeck(true);
-        toast('Carte ajoutée !');
+        else updateProgress();
+        toast('Card added!');
       }
 
-      function switchTab(which) {
-        const study = which === 'study';
-        
-        const activeClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all bg-slate-900 text-white shadow-xs';
-        const inactiveClass = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all text-slate-500 hover:text-slate-800';
-        
-        $('tabStudy').className = study ? activeClass : inactiveClass;
-        $('tabManage').className = !study ? activeClass : inactiveClass;
-        
-        if (study) {
-          $('viewStudy').classList.add('flex');
-          $('viewStudy').classList.remove('hidden');
-          $('viewManage').classList.add('hidden');
-          $('viewManage').classList.remove('flex');
-        } else {
-          $('viewStudy').classList.remove('flex');
-          $('viewStudy').classList.add('hidden');
-          $('viewManage').classList.remove('hidden');
-          $('viewManage').classList.add('flex');
+      /* ============ IMPORT / EXPORT ============ */
+      $('btnExport').addEventListener('click', () => {
+        const data = state.cards.map(c => ({ fr: c.fr, en: c.en }));
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cartes-export.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        toast('Export ready');
+      });
+
+      $('btnImport').addEventListener('click', () => $('importFile').click());
+      $('importFile').addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          if (!Array.isArray(data)) throw new Error('format');
+          const have = new Set(state.cards.map(c => c.fr.trim().toLowerCase()));
+          let count = 0;
+          data.forEach(item => {
+            const fr = (item.fr || '').trim();
+            const en = (item.en || '').trim();
+            if (fr && en && !have.has(fr.toLowerCase())) {
+              state.cards.push({ id: uid(), fr, en, mastered: false });
+              have.add(fr.toLowerCase());
+              count++;
+            }
+          });
+          persist();
+          rebuildQueue();
+          renderDeck(true);
+          toast(count > 0 ? `${count} card(s) imported` : 'No new cards');
+        } catch (err) {
+          toast('Invalid JSON file');
         }
+        e.target.value = '';
+      });
+
+      /* ============ SHEETS ============ */
+      function openSheet(el) {
+        sheetBackdrop.classList.add('visible');
+        el.classList.add('open');
       }
-      
-      $('tabStudy').addEventListener('click', () => switchTab('study'));
-      $('tabManage').addEventListener('click', () => switchTab('manage'));
+      function closeSheets() {
+        addSheet.classList.remove('open');
+        customizeSheet.classList.remove('open');
+        sheetBackdrop.classList.remove('visible');
+      }
+      $('btnOpenAdd').addEventListener('click', () => openSheet(addSheet));
+      $('btnCustomize').addEventListener('click', () => openSheet(customizeSheet));
+      sheetBackdrop.addEventListener('click', closeSheets);
+
+      /* ============ THEME + BUTTON VISIBILITY ============ */
+      function applyTheme(name) {
+        document.documentElement.setAttribute('data-theme', name);
+        state.settings.theme = name;
+        persist();
+        document.querySelectorAll('.theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+      }
+      document.querySelectorAll('.theme-swatch').forEach(b => {
+        b.addEventListener('click', () => applyTheme(b.dataset.theme));
+      });
+
+      function applyButtonVisibility() {
+        $('actionButtons').style.display = state.settings.showButtons ? '' : 'none';
+        mainStage.classList.toggle('buttons-hidden', !state.settings.showButtons);
+      }
+      $('toggleButtons').addEventListener('change', e => {
+        state.settings.showButtons = e.target.checked;
+        persist();
+        applyButtonVisibility();
+      });
+
+      /* ============ LANGUAGE DIRECTION TOGGLE ============ */
+      function updateLangToggleLabel() {
+        $('langToggleLabel').textContent = state.settings.frontLang === 'fr' ? 'FR→EN' : 'EN→FR';
+      }
+      function toggleFrontLang() {
+        state.settings.frontLang = state.settings.frontLang === 'fr' ? 'en' : 'fr';
+        persist();
+        updateLangToggleLabel();
+        renderDeck(true);
+      }
+      $('btnLangToggle').addEventListener('click', toggleFrontLang);
 
       load().then(() => {
+        applyTheme(state.settings.theme);
+        $('toggleButtons').checked = state.settings.showButtons;
+        applyButtonVisibility();
+        updateLangToggleLabel();
         rebuildQueue();
         renderDeck(true);
       });
