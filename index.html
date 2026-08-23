@@ -746,13 +746,20 @@
       }
 
       /* ============ HEADER AUTO-HIDE ============ */
+      const HEADER_TAP_ZONE = 70; // px from top of screen that reveals the header
       let hideTimer = null;
       function showHeader() {
         appHeader.classList.add('visible');
         clearTimeout(hideTimer);
         hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 3200);
       }
-      document.addEventListener('pointerdown', showHeader, { passive: true });
+      function hideHeaderNow() {
+        clearTimeout(hideTimer);
+        appHeader.classList.remove('visible');
+      }
+      document.addEventListener('pointerdown', e => {
+        if (e.clientY <= HEADER_TAP_ZONE) showHeader();
+      }, { passive: true });
       appHeader.addEventListener('pointerenter', () => clearTimeout(hideTimer));
       appHeader.addEventListener('pointerleave', () => {
         hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 1400);
@@ -882,6 +889,7 @@
 
         const down = e => {
           if (animating) return;
+          hideHeaderNow();
           dragging = true;
           moved = false;
           startX = e.clientX;
