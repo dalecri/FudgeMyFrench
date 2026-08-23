@@ -649,6 +649,20 @@
       </label>
     </div>
     <p class="text-xs mt-3" style="color: var(--ink-soft);">Swiping and tapping the card still work even when the buttons are hidden.</p>
+
+    <div class="sheet-divider"></div>
+
+    <label class="sheet-label">Cloud sync (JSONBin.io)</label>
+    <p class="text-xs mb-3" style="color: var(--ink-soft);">Free account at jsonbin.io &rarr; copy your API key. We'll create a bin for you the first time you connect.</p>
+    <div class="space-y-2 mb-3">
+      <input id="inApiKey" type="password" placeholder="API key (X-Master-Key)" class="sheet-input" autocomplete="off">
+      <input id="inBinId" type="text" placeholder="Bin ID (auto-filled after connecting)" class="sheet-input" autocomplete="off">
+    </div>
+    <div class="flex gap-3 mb-3">
+      <button id="btnConnectSync" class="sheet-secondary-btn">Connect</button>
+      <button id="btnDisconnectSync" class="sheet-secondary-btn">Disconnect</button>
+    </div>
+    <p id="syncStatus" class="text-xs" style="color: var(--ink-soft);">Not connected — cards saved on this device only.</p>
   </div>
 
   <div id="toast" class="toast"></div>
@@ -656,8 +670,6 @@
   <script>
     (() => {
       'use strict';
-
-      const KEY = 'cartes-deck-v6';
 
       function uid() {
         return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -698,46 +710,119 @@
       const THEMES = ['blue', 'orange', 'sage', 'rose'];
       const SHAPES = ['shape-1', 'shape-2', 'shape-3', 'shape-4'];
 
-      const memoryStorage = {
-        _data: {},
-        get: function(k) { return Promise.resolve({ value: this._data[k] || null }); },
-        set: function(k, v) { this._data[k] = v; return Promise.resolve(); }
-      };
-      const getStorage = () => window.storage || memoryStorage;
+      const CACHE_KEY = 'cartes-deck-cache-v1';
+      const CONFIG_KEY = 'cartes-jsonbin-config-v1';
+      const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+
+      let syncConfig = { apiKey: '', binId: '' };
+
+      function loadConfig() {
+        try {
+          const raw = localStorage.getItem(CONFIG_KEY);
+          return raw ? JSON.parse(raw) : { apiKey: '', binId: '' };
+        } catch (e) { return { apiKey: '', binId: '' }; }
+      }
+      function saveConfig(cfg) {
+        try { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); } catch (e) { /* ignore */ }
+      }
+
+      function cacheLocally() {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+      }
+      function loadLocalCache() {
+        try {
+          const raw = localStorage.getItem(CACHE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      }
+
+      async function cloudLoad(cfg) {
+        const res = await fetch(`${JSONBIN_BASE}/${cfg.binId}/latest`, {
+          headers: { 'X-Master-Key': cfg.apiKey }
+        });
+        if (!res.ok) throw new Error('cloud load failed');
+        const json = await res.json();
+        return json.record;
+      }
+      async function cloudSave(cfg, data) {
+        const res = await fetch(`${JSONBIN_BASE}/${cfg.binId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': cfg.apiKey },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('cloud save failed');
+      }
+      async function cloudCreate(cfg, data) {
+        const res = await fetch(JSONBIN_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': cfg.apiKey, 'X-Bin-Name': 'cartes-deck' },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('cloud create failed');
+        const json = await res.json();
+        return json.metadata.id;
+      }
+
+      function setSyncStatus(s) {
+        const el = document.getElementById('syncStatus');
+        if (!el) return;
+        const map = {
+          idle: 'Not connected — cards saved on this device only.',
+          syncing: 'Syncing…',
+          synced: 'Synced to the cloud.',
+          error: 'Sync error — check your API key and bin ID.'
+        };
+        el.textContent = map[s] || map.idle;
+      }
+
+      function seedIfEmpty() {
+        if (state.cards.length > 0) return;
+        seed.forEach(s => {
+          state.cards.push({ id: uid(), fr: s.fr, en: s.en, mastered: false });
+        });
+      }
 
       async function load() {
-        try {
-          const res = await getStorage().get(KEY);
-          if (res && res.value) {
-            const parsed = JSON.parse(res.value);
-            state.cards = parsed.cards || [];
-            state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, parsed.settings || {});
-          }
-        } catch (e) {
-          console.warn('Fallback storage active');
+        syncConfig = loadConfig();
+
+        const cached = loadLocalCache();
+        if (cached) {
+          state.cards = cached.cards || [];
+          state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, cached.settings || {});
         }
 
-        const have = new Set(state.cards.map(c => c.fr.trim().toLowerCase()));
-        let added = false;
-        seed.forEach(s => {
-          if (!have.has(s.fr.trim().toLowerCase())) {
-            state.cards.push({ id: uid(), fr: s.fr, en: s.en, mastered: false });
-            added = true;
+        if (syncConfig.apiKey && syncConfig.binId) {
+          setSyncStatus('syncing');
+          try {
+            const cloud = await cloudLoad(syncConfig);
+            if (cloud) {
+              state.cards = cloud.cards || [];
+              state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, cloud.settings || {});
+            }
+            setSyncStatus('synced');
+          } catch (e) {
+            setSyncStatus('error');
           }
-        });
-        if (added) persist();
+        }
+
+        seedIfEmpty();
+        cacheLocally();
       }
 
       let saveTimer = null;
       function persist() {
+        cacheLocally();
         clearTimeout(saveTimer);
         saveTimer = setTimeout(async () => {
+          if (!syncConfig.apiKey || !syncConfig.binId) return;
           try {
-            await getStorage().set(KEY, JSON.stringify(state));
+            setSyncStatus('syncing');
+            await cloudSave(syncConfig, state);
+            setSyncStatus('synced');
           } catch (e) {
-            console.warn('Persistence save error', e);
+            setSyncStatus('error');
           }
-        }, 250);
+        }, 700);
       }
 
       const $ = id => document.getElementById(id);
@@ -1148,11 +1233,62 @@
       }
       $('btnLangToggle').addEventListener('click', toggleFrontLang);
 
+      /* ============ CLOUD SYNC UI ============ */
+      const inApiKey = $('inApiKey'), inBinId = $('inBinId');
+
+      $('btnConnectSync').addEventListener('click', async () => {
+        const apiKey = inApiKey.value.trim();
+        let binId = inBinId.value.trim();
+        if (!apiKey) { toast('Enter your API key first'); return; }
+
+        setSyncStatus('syncing');
+        try {
+          if (!binId) {
+            binId = await cloudCreate({ apiKey }, state);
+            inBinId.value = binId;
+          } else {
+            const cloud = await cloudLoad({ apiKey, binId });
+            if (cloud && Array.isArray(cloud.cards)) {
+              state.cards = cloud.cards;
+              state.settings = Object.assign(state.settings, cloud.settings || {});
+            } else {
+              await cloudSave({ apiKey, binId }, state);
+            }
+          }
+          syncConfig = { apiKey, binId };
+          saveConfig(syncConfig);
+          cacheLocally();
+          rebuildQueue();
+          renderDeck(true);
+          applyTheme(state.settings.theme);
+          $('toggleButtons').checked = state.settings.showButtons;
+          applyButtonVisibility();
+          updateLangToggleLabel();
+          setSyncStatus('synced');
+          toast('Connected!');
+        } catch (e) {
+          setSyncStatus('error');
+          toast('Could not connect — check your key and bin ID');
+        }
+      });
+
+      $('btnDisconnectSync').addEventListener('click', () => {
+        syncConfig = { apiKey: '', binId: '' };
+        saveConfig(syncConfig);
+        inApiKey.value = '';
+        inBinId.value = '';
+        setSyncStatus('idle');
+        toast('Disconnected — saving locally only');
+      });
+
       load().then(() => {
         applyTheme(state.settings.theme);
         $('toggleButtons').checked = state.settings.showButtons;
         applyButtonVisibility();
         updateLangToggleLabel();
+        inApiKey.value = syncConfig.apiKey || '';
+        inBinId.value = syncConfig.binId || '';
+        if (!syncConfig.apiKey || !syncConfig.binId) setSyncStatus('idle');
         rebuildQueue();
         renderDeck(true);
       });
