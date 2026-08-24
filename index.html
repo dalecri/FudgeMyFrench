@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Cartes · Minimalist French Flashcards</title>
+  <title>Cartes · Pixel French Flashcards</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -16,8 +16,8 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            serif: ['Fraunces', 'serif'],
+            sans: ['Pixelify Sans', 'sans-serif'],
+            serif: ['Pixelify Sans', 'sans-serif'],
           },
           screens: {
             'xs': '380px',
@@ -31,68 +31,76 @@
   </script>
 
   <style>
-    /* ============ THEME PRESETS ============ */
+    /* ============ THEME PRESETS (retro pixel palettes) ============ */
     :root, [data-theme="doux"] {
-      --app-bg: #F2ECE4;
-      --paper: #FAF8F4;
-      --ink: #2C2830;
-      --ink-soft: #635E6A;
+      /* Arcade — light, matches the reference: mint bg, white cards */
+      --app-bg: #8FC79C;
+      --paper: #FFFFFF;
+      --card-front: #FFFFFF;
+      --ink: #1D1D1D;
+      --ink-soft: #52625A;
 
-      --theme-blue-sat: #4C599E;
-      --theme-orange-sat: #E2A648;
-      --theme-sage-sat: #6F947B;
-      --theme-rose-sat: #C97782;
-
-      --theme-blue-light: #EEF1F8;
-      --theme-orange-light: #FDF5E6;
-      --theme-sage-light: #EFF5F0;
-      --theme-rose-light: #FAEEEE;
+      --theme-blue-sat: #3457A6;
+      --theme-orange-sat: #E8983B;
+      --theme-sage-sat: #2F8F52;
+      --theme-rose-sat: #D8425F;
     }
 
     [data-theme="nuit"] {
-      --app-bg: #17151E;
-      --paper: #221F2B;
-      --ink: #F1ECF7;
-      --ink-soft: #A79FBC;
+      /* Night — dark neon arcade */
+      --app-bg: #100F17;
+      --paper: #1B1926;
+      --card-front: #1B1926;
+      --ink: #F1EFFB;
+      --ink-soft: #9490B0;
 
-      --theme-blue-sat: #8B9AF0;
-      --theme-orange-sat: #E8B563;
-      --theme-sage-sat: #7FB08C;
-      --theme-rose-sat: #DD8A96;
-
-      --theme-blue-light: #262A42;
-      --theme-orange-light: #362C1E;
-      --theme-sage-light: #212C24;
-      --theme-rose-light: #34222A;
+      --theme-blue-sat: #3FD0F2;
+      --theme-orange-sat: #FFC24B;
+      --theme-sage-sat: #3FE08F;
+      --theme-rose-sat: #FF5C9E;
     }
 
     [data-theme="vif"] {
-      --app-bg: #FFF3E4;
-      --paper: #FFFDF8;
-      --ink: #241C1B;
-      --ink-soft: #7A6558;
+      /* Game Boy — monochrome LCD green */
+      --app-bg: #B7CB8B;
+      --paper: #E6F0C9;
+      --card-front: #E6F0C9;
+      --ink: #24361D;
+      --ink-soft: #55704A;
 
-      --theme-blue-sat: #2D6FE0;
-      --theme-orange-sat: #FF7A3D;
-      --theme-sage-sat: #0FA98A;
-      --theme-rose-sat: #E4407A;
-
-      --theme-blue-light: #E3EEFF;
-      --theme-orange-light: #FFEDE0;
-      --theme-sage-light: #E1FBF3;
-      --theme-rose-light: #FFE3EE;
+      --theme-blue-sat: #2E4A22;
+      --theme-orange-sat: #55732C;
+      --theme-sage-sat: #3D6B32;
+      --theme-rose-sat: #6D8C44;
     }
-
-    --shadow-md-val: 0 12px 36px rgba(44, 40, 48, 0.12);
 
     body {
       background-color: var(--app-bg);
       color: var(--ink);
       overflow: hidden;
+      font-family: 'Pixelify Sans', sans-serif;
       -webkit-font-smoothing: antialiased;
-      transition: background-color 0.4s ease, color 0.4s ease;
+      transition: background-color 0.3s ease, color 0.3s ease;
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
+    }
+
+    /* generic stepped pixel-corner cuts */
+    .pixel-corner-sm {
+      clip-path: polygon(
+        0 6px, 6px 6px, 6px 0,
+        calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px,
+        100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%,
+        6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)
+      );
+    }
+    .pixel-corner-lg {
+      clip-path: polygon(
+        0 14px, 14px 14px, 14px 0,
+        calc(100% - 14px) 0, calc(100% - 14px) 14px, 100% 14px,
+        100% calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), calc(100% - 14px) 100%,
+        14px 100%, 14px calc(100% - 14px), 0 calc(100% - 14px)
+      );
     }
 
     /* ============ HEADER (auto-hide overlay) ============ */
@@ -105,12 +113,11 @@
       flex-direction: column;
       align-items: stretch;
       gap: 10px;
-      background: color-mix(in srgb, var(--paper) 86%, transparent);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+      background: var(--paper);
+      border-bottom: 4px solid var(--ink);
       transform: translateY(-100%);
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1);
+      will-change: transform;
     }
     .app-header.visible {
       transform: translateY(0);
@@ -124,19 +131,21 @@
       width: 100%;
     }
 
-    .header-progress-row {
-      text-align: center;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: var(--ink-soft);
-    }
-
     .header-actions {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+
+    .brand-pixel {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot { width: 8px; height: 8px; }
 
     .icon-btn {
       width: 38px;
@@ -145,16 +154,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      background: var(--paper);
       color: var(--ink-soft);
-      border: none;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
       touch-action: manipulation;
       flex-shrink: 0;
     }
-    .icon-btn:active { transform: scale(0.9); }
+    .icon-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
 
-    /* plain icon button, no background container */
+    /* plain icon button, no background container (kept chrome-free per spec) */
     .icon-btn-plain {
       width: 38px;
       height: 38px;
@@ -164,7 +174,7 @@
       background: transparent;
       border: none;
       color: var(--ink-soft);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+      transition: transform 0.15s ease, color 0.2s ease;
       touch-action: manipulation;
       flex-shrink: 0;
     }
@@ -173,42 +183,44 @@
     .lang-toggle-btn {
       height: 38px;
       padding: 0 13px;
-      border-radius: 9999px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      background: var(--paper);
       color: var(--ink-soft);
-      border: none;
+      border: 3px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-family: 'Pixelify Sans', sans-serif;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.02em;
       white-space: nowrap;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
       touch-action: manipulation;
       flex-shrink: 0;
     }
-    .lang-toggle-btn:active { transform: scale(0.92); }
+    .lang-toggle-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
 
     /* ============ PROGRESS PILL ============ */
     .progress-pill {
-      position: fixed;
-      top: calc(88px + env(safe-area-inset-top));
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 40;
-      font-size: 10.5px;
+      flex-shrink: 0;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.02em;
-      color: var(--ink-soft);
-      background: color-mix(in srgb, var(--paper) 88%, transparent);
-      backdrop-filter: blur(10px);
-      padding: 6px 14px;
-      border-radius: 9999px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-      pointer-events: none;
+      color: var(--ink);
+      background: var(--paper);
+      border: 2.5px solid var(--ink);
+      padding: 8px 16px;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
       white-space: nowrap;
     }
+    .progress-pill { clip-path: polygon(
+        0 6px, 6px 6px, 6px 0,
+        calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px,
+        100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%,
+        6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)
+    ); }
 
     /* ============ MAIN STAGE ============ */
     .main-stage {
@@ -226,11 +238,6 @@
 
     #deckWrap {
       transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    #mainStage.buttons-hidden #deckWrap {
-      height: 82vh;
-      max-height: 780px;
     }
 
     .fcard {
@@ -255,7 +262,12 @@
     .face {
       position: absolute;
       inset: 0;
-      border-radius: 32px;
+      clip-path: polygon(
+        0 14px, 14px 14px, 14px 0,
+        calc(100% - 14px) 0, calc(100% - 14px) 14px, 100% 14px,
+        100% calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), calc(100% - 14px) 100%,
+        14px 100%, 14px calc(100% - 14px), 0 calc(100% - 14px)
+      );
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       display: flex;
@@ -263,71 +275,77 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      box-shadow: var(--shadow-md-val);
-      border: 6px solid var(--paper);
-      transition: border-color 0.4s ease;
+      border: 5px solid var(--ink);
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.22);
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
 
-    .face.front { transform: rotateY(0deg); z-index: 2; }
-    .face.back { transform: rotateY(180deg); z-index: 1; }
+    .face.front { transform: rotateY(0deg); z-index: 2; background: var(--card-front); }
+    .face.back { transform: rotateY(180deg); z-index: 1; color: var(--paper); }
 
     .theme-blue { background-color: var(--theme-blue-sat); }
     .theme-orange { background-color: var(--theme-orange-sat); }
     .theme-sage { background-color: var(--theme-sage-sat); }
     .theme-rose { background-color: var(--theme-rose-sat); }
 
-    .theme-light-blue { background-color: var(--theme-blue-light); }
-    .theme-light-orange { background-color: var(--theme-orange-light); }
-    .theme-light-sage { background-color: var(--theme-sage-light); }
-    .theme-light-rose { background-color: var(--theme-rose-light); }
+    .theme-light-blue { --suit-color: var(--theme-blue-sat); }
+    .theme-light-orange { --suit-color: var(--theme-orange-sat); }
+    .theme-light-sage { --suit-color: var(--theme-sage-sat); }
+    .theme-light-rose { --suit-color: var(--theme-rose-sat); }
+    .face.front { color: var(--suit-color); }
 
-    .shape-saturated-blue { background-color: var(--theme-blue-sat) !important; }
-    .shape-saturated-orange { background-color: var(--theme-orange-sat) !important; }
-    .shape-saturated-sage { background-color: var(--theme-sage-sat) !important; }
-    .shape-saturated-rose { background-color: var(--theme-rose-sat) !important; }
-
-    .face.back .geo-shape {
-      background-color: rgba(255, 255, 255, 0.22);
+    .card-word {
+      font-family: 'Pixelify Sans', sans-serif;
+      font-weight: 700;
+      font-size: clamp(26px, 7.5vw, 42px);
+      text-align: center;
+      line-height: 1.2;
+      padding: 0 30px;
+      word-break: break-word;
     }
 
-    .geo-shape {
-      width: clamp(210px, 58vw, 300px);
-      height: clamp(210px, 58vw, 300px);
+    .card-corner {
+      position: absolute;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-      animation: morphingBlob 10s ease-in-out infinite alternate;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+      line-height: 0;
     }
-
-    .geo-shape.shape-1 { border-radius: 54% 46% 62% 38% / 44% 56% 44% 56%; }
-    .geo-shape.shape-2 { border-radius: 38% 62% 42% 58% / 52% 38% 62% 48%; }
-    .geo-shape.shape-3 { border-radius: 48% 52% 32% 68% / 42% 68% 32% 58%; }
-    .geo-shape.shape-4 { border-radius: 62% 38% 48% 52% / 58% 32% 68% 42%; }
-
-    @keyframes morphingBlob {
-      0% { transform: scale(1) rotate(0deg); }
-      100% { transform: scale(1.06) rotate(12deg); }
-    }
+    .corner-tl { top: 12px; left: 12px; }
+    .corner-br { bottom: 12px; right: 12px; transform: rotate(180deg); }
 
     .fcard.behind {
       transform: scale(0.95) translateY(14px) rotate(-1deg);
-      opacity: 0.8;
+      opacity: 1;
       pointer-events: none;
       z-index: 10;
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
     }
     .fcard.behind2 {
       transform: scale(0.9) translateY(28px) rotate(1deg);
-      opacity: 0.4;
+      opacity: 1;
       pointer-events: none;
       z-index: 5;
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
     }
+    /* face-down deck look for the stacked cards behind the active one */
+    .fcard.behind::after,
+    .fcard.behind2::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      clip-path: polygon(
+        0 14px, 14px 14px, 14px 0,
+        calc(100% - 14px) 0, calc(100% - 14px) 14px, 100% 14px,
+        100% calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), calc(100% - 14px) 100%,
+        14px 100%, 14px calc(100% - 14px), 0 calc(100% - 14px)
+      );
+      border: 5px solid var(--ink);
+      background-image: repeating-conic-gradient(var(--card-front) 0% 25%, color-mix(in srgb, var(--theme-blue-sat) 45%, var(--card-front)) 0% 50%);
+      background-size: 22px 22px;
+    }
+
     .fcard.entering {
-      animation: cardEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: cardEnter 0.35s steps(6);
     }
     @keyframes cardEnter {
       from { transform: scale(0.92) translateY(20px); opacity: 0; }
@@ -337,13 +355,14 @@
     .stamp {
       position: absolute;
       bottom: 24px;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Pixelify Sans', sans-serif;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       padding: 6px 14px;
-      border-radius: 99px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
       opacity: 0;
       pointer-events: none;
       z-index: 30;
@@ -352,31 +371,15 @@
     .stamp.acquis { right: 24px; color: #1E4620; background-color: #E2F3E5; }
     .stamp.revoir { left: 24px; color: #611D24; background-color: #FCE8E9; }
 
-    .tactile-btn {
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 12px rgba(44, 40, 48, 0.06);
-      background-color: var(--paper);
-      touch-action: manipulation;
-    }
-    .tactile-btn:active { transform: scale(0.92); box-shadow: 0 2px 6px rgba(44, 40, 48, 0.03); }
-
-    .btn-revoir { background-color: #FDF4F5; color: #D48A93; border: 1.5px solid rgba(212, 138, 147, 0.22); }
-    .btn-flip { background-color: var(--paper); color: var(--ink-soft); border: 1.5px solid color-mix(in srgb, var(--ink) 12%, transparent); }
-    .btn-acquis { background-color: #F1F7F3; color: #87A691; border: 1.5px solid rgba(135, 166, 145, 0.22); }
-
     /* ============ BOTTOM SHEETS ============ */
     .sheet-backdrop {
       position: fixed;
       inset: 0;
       z-index: 60;
-      background: rgba(10, 8, 14, 0.4);
+      background: rgba(10, 8, 14, 0.45);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.35s ease;
+      transition: opacity 0.25s ease;
     }
     .sheet-backdrop.visible { opacity: 1; pointer-events: auto; }
 
@@ -386,36 +389,37 @@
       z-index: 70;
       background: var(--paper);
       color: var(--ink);
-      border-radius: 28px 28px 0 0;
-      box-shadow: 0 -12px 40px rgba(0,0,0,0.15);
+      border-radius: 14px 14px 0 0;
+      border-top: 4px solid var(--ink);
       padding: 10px 22px calc(26px + env(safe-area-inset-bottom));
       max-height: 82vh;
       overflow-y: auto;
       transform: translateY(110%);
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .bottom-sheet.open { transform: translateY(0); }
 
     .sheet-handle {
       width: 40px;
-      height: 4.5px;
-      border-radius: 99px;
-      background: color-mix(in srgb, var(--ink) 15%, transparent);
+      height: 5px;
+      background: var(--ink);
+      opacity: 0.25;
       margin: 10px auto 18px;
     }
 
     .sheet-input {
       width: 100%;
+      font-family: 'Pixelify Sans', sans-serif;
       font-size: 13px;
-      border-radius: 14px;
+      border-radius: 6px;
       padding: 12px 14px;
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      background: var(--card-front);
       color: var(--ink);
-      border: 0;
+      border: 2.5px solid var(--ink);
       outline: none;
     }
     .sheet-input:focus {
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-blue-sat) 55%, transparent);
+      box-shadow: 3px 3px 0 var(--theme-blue-sat);
     }
     .sheet-label {
       font-size: 9.5px;
@@ -431,27 +435,34 @@
       padding: 13px;
       background: var(--ink);
       color: var(--paper);
+      font-family: 'Pixelify Sans', sans-serif;
       font-size: 13px;
-      font-weight: 600;
-      border-radius: 14px;
-      transition: all 0.15s ease;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 55%, transparent);
+      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
     }
-    .sheet-primary-btn:active { transform: scale(0.97); }
+    .sheet-primary-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 transparent; }
     .sheet-primary-btn:disabled { opacity: 0.35; }
     .sheet-secondary-btn {
       flex: 1;
       padding: 11px;
+      font-family: 'Pixelify Sans', sans-serif;
       font-size: 12px;
-      font-weight: 600;
-      border-radius: 14px;
-      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      font-weight: 700;
+      border-radius: 8px;
+      background: var(--paper);
       color: var(--ink);
-      transition: all 0.15s ease;
+      border: 2.5px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
     }
-    .sheet-secondary-btn:active { transform: scale(0.96); }
+    .sheet-secondary-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
     .sheet-divider {
-      height: 1px;
-      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      height: 3px;
+      background: var(--ink);
+      opacity: 0.12;
       margin: 20px 0;
     }
 
@@ -462,38 +473,45 @@
       align-items: center;
       gap: 8px;
       padding: 12px 8px;
-      border-radius: 16px;
-      border: 1.5px solid color-mix(in srgb, var(--ink) 10%, transparent);
-      transition: all 0.15s ease;
+      border-radius: 8px;
+      background: var(--paper);
+      border: 2.5px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
     }
     .theme-swatch.active {
-      border-color: var(--ink);
-      background: color-mix(in srgb, var(--ink) 5%, transparent);
+      background: color-mix(in srgb, var(--ink) 8%, var(--paper));
     }
-    .theme-swatch:active { transform: scale(0.96); }
+    .theme-swatch:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
     .swatch-dots { display: flex; gap: 3px; }
-    .swatch-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
-    .theme-swatch-label { font-size: 11px; font-weight: 600; color: var(--ink); }
+    .swatch-dots span { width: 10px; height: 10px; border-radius: 2px; display: block; }
+    .theme-swatch-label {
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
 
     .switch { position: relative; display: inline-block; width: 42px; height: 25px; flex-shrink: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .switch-track {
       position: absolute; inset: 0; cursor: pointer;
-      background: color-mix(in srgb, var(--ink) 18%, transparent);
-      border-radius: 99px;
+      background: var(--card-front);
+      border: 2.5px solid var(--ink);
+      border-radius: 8px;
       transition: background 0.2s ease;
     }
     .switch-track::before {
       content: "";
       position: absolute;
-      width: 19px; height: 19px;
-      left: 3px; top: 3px;
-      background: var(--paper);
-      border-radius: 50%;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      width: 15px; height: 15px;
+      left: 2px; top: 2px;
+      background: var(--ink);
+      border-radius: 3px;
+      transition: transform 0.15s steps(3);
     }
-    .switch input:checked + .switch-track { background: var(--ink); }
     .switch input:checked + .switch-track::before { transform: translateX(17px); }
 
     .sheet-row {
@@ -502,11 +520,13 @@
       justify-content: space-between;
       gap: 12px;
     }
-    .sheet-row-label { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .sheet-row-label { font-size: 13px; font-weight: 600; color: var(--ink); }
     .sheet-row-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 
     .toast {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Pixelify Sans', sans-serif;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+      border: 2.5px solid rgba(0,0,0,0.15);
     }
   </style>
 </head>
@@ -516,9 +536,9 @@
   <!-- Auto-hiding header -->
   <header id="appHeader" class="app-header">
     <div class="header-top-row">
-      <div class="brand font-serif font-semibold text-xl tracking-tight flex items-center gap-1.5 select-none shrink-0" style="color: var(--ink);">
-        Car<em>tes</em>
-        <span class="w-1.5 h-1.5 rounded-full bg-[#E38379]"></span>
+      <div class="brand brand-pixel" style="color: var(--ink);">
+        Cartes
+        <span class="brand-dot" style="background:var(--theme-rose-sat);"></span>
       </div>
       <div class="header-actions">
         <button id="btnCustomize" aria-label="Customize" class="icon-btn-plain">
@@ -543,38 +563,13 @@
     </div>
   </header>
 
-  <!-- Progress pill: persistent, sits just below the header zone, over the card -->
-  <div id="progressPill" class="progress-pill">0 cards</div>
-
   <!-- Main study stage -->
   <main id="mainStage" class="main-stage">
-    <div id="deckWrap" class="relative w-full max-w-[340px] xs:max-w-[400px] ipadmini:max-w-[460px] ipad:max-w-[500px] aspect-[3/4] h-[62vh] xs:h-[66vh] ipadmini:h-[68vh] max-h-[600px] overflow-visible flex items-center justify-center">
+    <div id="deckWrap" class="relative w-full max-w-[340px] xs:max-w-[400px] ipadmini:max-w-[460px] ipad:max-w-[500px] aspect-[3/4] h-[70vh] xs:h-[74vh] ipadmini:h-[76vh] max-h-[700px] overflow-visible flex items-center justify-center">
       <div id="deck" class="relative w-full h-full overflow-visible"></div>
     </div>
 
-    <div id="actionButtons" class="shrink-0 flex items-center justify-center gap-5 xs:gap-6">
-      <button id="btnLeft" aria-label="Needs review" class="tactile-btn btn-revoir w-[54px] h-[54px] xs:w-[60px] xs:h-[60px] ipadmini:w-[64px] ipadmini:h-[64px]">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M1 4v6h6" />
-          <path d="M3.5 15a9 9 0 1 0 2-9.7L1 10" />
-        </svg>
-      </button>
-
-      <button id="btnFlip" aria-label="Flip card" class="tactile-btn btn-flip w-[46px] h-[46px] xs:w-[50px] xs:h-[50px] ipadmini:w-[54px] ipadmini:h-[54px]">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 2l4 4-4 4" />
-          <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-          <path d="M7 22l-4-4 4-4" />
-          <path d="M21 13v1a4 4 0 0 1-4 4H3" />
-        </svg>
-      </button>
-
-      <button id="btnRight" aria-label="Mastered" class="tactile-btn btn-acquis w-[54px] h-[54px] xs:w-[60px] xs:h-[60px] ipadmini:w-[64px] ipadmini:h-[64px]">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
-      </button>
-    </div>
+    <div id="progressPill" class="progress-pill">0 cards</div>
   </main>
 
   <!-- Shared backdrop for sheets -->
@@ -583,7 +578,7 @@
   <!-- Add / Import / Export sheet -->
   <div id="addSheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
-    <h3 class="font-serif font-semibold text-lg text-center mb-5" style="color: var(--ink);">New card</h3>
+    <h3 class="font-semibold text-lg text-center mb-5" style="color: var(--ink);">New card</h3>
 
     <div class="space-y-3 mb-4">
       <div>
@@ -612,43 +607,29 @@
   <!-- Customize sheet -->
   <div id="customizeSheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
-    <h3 class="font-serif font-semibold text-lg text-center mb-5" style="color: var(--ink);">Customize</h3>
+    <h3 class="font-semibold text-lg text-center mb-5" style="color: var(--ink);">Customize</h3>
 
     <label class="sheet-label">Theme</label>
     <div class="flex gap-3 mb-6">
       <button class="theme-swatch" data-theme="doux">
         <span class="swatch-dots">
-          <span style="background:#4C599E"></span><span style="background:#E2A648"></span><span style="background:#6F947B"></span><span style="background:#C97782"></span>
+          <span style="background:#3457A6"></span><span style="background:#E8983B"></span><span style="background:#2F8F52"></span><span style="background:#D8425F"></span>
         </span>
-        <span class="theme-swatch-label">Soft</span>
+        <span class="theme-swatch-label">Arcade</span>
       </button>
       <button class="theme-swatch" data-theme="nuit">
         <span class="swatch-dots">
-          <span style="background:#8B9AF0"></span><span style="background:#E8B563"></span><span style="background:#7FB08C"></span><span style="background:#DD8A96"></span>
+          <span style="background:#3FD0F2"></span><span style="background:#FFC24B"></span><span style="background:#3FE08F"></span><span style="background:#FF5C9E"></span>
         </span>
         <span class="theme-swatch-label">Night</span>
       </button>
       <button class="theme-swatch" data-theme="vif">
         <span class="swatch-dots">
-          <span style="background:#2D6FE0"></span><span style="background:#FF7A3D"></span><span style="background:#0FA98A"></span><span style="background:#E4407A"></span>
+          <span style="background:#2E4A22"></span><span style="background:#55732C"></span><span style="background:#3D6B32"></span><span style="background:#6D8C44"></span>
         </span>
-        <span class="theme-swatch-label">Bold</span>
+        <span class="theme-swatch-label">Game Boy</span>
       </button>
     </div>
-
-    <div class="sheet-divider"></div>
-
-    <div class="sheet-row">
-      <div>
-        <div class="sheet-row-label">Action buttons</div>
-        <div class="sheet-row-sub">Show the ✕ / ✓ / flip buttons under the card</div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="toggleButtons" checked>
-        <span class="switch-track"></span>
-      </label>
-    </div>
-    <p class="text-xs mt-3" style="color: var(--ink-soft);">Swiping and tapping the card still work even when the buttons are hidden.</p>
 
     <div class="sheet-divider"></div>
 
@@ -709,6 +690,26 @@
 
       const THEMES = ['blue', 'orange', 'sage', 'rose'];
       const SHAPES = ['shape-1', 'shape-2', 'shape-3', 'shape-4'];
+
+      /* ============ PIXEL SUIT ICONS ============ */
+      const SUIT_BY_THEME = { blue: 'spade', orange: 'diamond', sage: 'club', rose: 'heart' };
+      const SUIT_GRIDS = {
+        heart:   ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'],
+        diamond: ['...X...', '..XXX..', '.XXXXX.', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'],
+        club:    ['..X.X..', '.XXXXX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '...X...', '..XXX..'],
+        spade:   ['...X...', '..XXX..', '.XXXXX.', 'XXXXXXX', 'XXXXXXX', '..X.X..', '.XXXXX.']
+      };
+      function pixelSuitSVG(key, unit) {
+        const grid = SUIT_GRIDS[key];
+        const n = grid.length;
+        let rects = '';
+        grid.forEach((row, y) => {
+          for (let x = 0; x < row.length; x++) {
+            if (row[x] === 'X') rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+          }
+        });
+        return `<svg width="${unit}" height="${unit}" viewBox="0 0 ${n} ${n}" fill="currentColor" shape-rendering="crispEdges">${rects}</svg>`;
+      }
 
       const CACHE_KEY = 'cartes-deck-cache-v1';
       const CONFIG_KEY = 'cartes-jsonbin-config-v1';
@@ -840,10 +841,10 @@
       function toast(msg) {
         const t = $('toast');
         t.textContent = msg;
-        t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[#2C2830] text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-lg z-[9999] transition-all transform translate-y-0 opacity-100";
+        t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[var(--ink)] text-[var(--paper)] text-xs font-semibold px-5 py-2.5 rounded-md z-[9999] transition-all transform translate-y-0 opacity-100";
         clearTimeout(t._h);
         t._h = setTimeout(() => {
-          t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[#2C2830] text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-lg z-[9999] transition-all transform translate-y-4 opacity-0 pointer-events-none";
+          t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[var(--ink)] text-[var(--paper)] text-xs font-semibold px-5 py-2.5 rounded-md z-[9999] transition-all transform translate-y-4 opacity-0 pointer-events-none";
         }, 1800);
       }
 
@@ -853,7 +854,7 @@
       function showHeader() {
         appHeader.classList.add('visible');
         clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 3200);
+        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 2200);
       }
       function hideHeaderNow() {
         clearTimeout(hideTimer);
@@ -915,9 +916,9 @@
             const c = cardById(slice[i]);
             if (!c) continue;
             const el = buildCard(c);
-            if (i === 1) el.className = 'fcard absolute inset-0 rounded-[32px] behind';
-            if (i === 2) el.className = 'fcard absolute inset-0 rounded-[32px] behind2';
-            if (i === 0) el.className = 'fcard absolute inset-0 rounded-[32px] z-20 entering';
+            if (i === 1) el.className = 'fcard absolute inset-0 behind';
+            if (i === 2) el.className = 'fcard absolute inset-0 behind2';
+            if (i === 0) el.className = 'fcard absolute inset-0 z-20 entering';
             deckEl.appendChild(el);
           }
           attachDrag(deckEl.lastElementChild);
@@ -925,11 +926,11 @@
       }
 
       function emptyHTML(glyph, title, body, action, label) {
-        return `<div class="empty flex flex-col items-center justify-center text-center p-6 rounded-[32px] shadow-lg w-full h-full" style="background:var(--paper);">
-          <div class="glyph text-5xl text-[#E38379] mb-4">${glyph}</div>
-          <h2 class="font-serif font-semibold text-xl mb-2" style="color:var(--ink);">${title}</h2>
+        return `<div class="empty flex flex-col items-center justify-center text-center p-6 rounded-lg w-full h-full" style="background:var(--card-front); border:5px solid var(--ink); box-shadow:7px 7px 0 rgba(0,0,0,0.22);">
+          <div class="glyph text-5xl mb-4" style="color:var(--theme-rose-sat);">${glyph}</div>
+          <h2 class="font-semibold text-xl mb-2" style="color:var(--ink);">${title}</h2>
           <p class="text-xs max-w-[220px] mb-6 leading-relaxed" style="color:var(--ink-soft);">${body}</p>
-          <button class="btn text-xs font-semibold px-6 py-3 rounded-full hover:scale-105 active:scale-95 transition-all" style="background:var(--ink); color:var(--paper);" data-action="${action}">${label}</button>
+          <button class="btn text-xs font-semibold px-6 py-3 rounded-md transition-all" style="background:var(--ink); color:var(--paper); border:2.5px solid var(--ink);" data-action="${action}">${label}</button>
         </div>`;
       }
 
@@ -952,26 +953,24 @@
         const el = document.createElement('div');
         el.dataset.id = c.id;
         const visuals = getCardVisuals(c.id);
+        const suitKey = SUIT_BY_THEME[visuals.theme];
         const frontText = state.settings.frontLang === 'fr' ? c.fr : c.en;
         const backText = state.settings.frontLang === 'fr' ? c.en : c.fr;
+        const suitIcon = pixelSuitSVG(suitKey, 20);
 
         el.innerHTML = `
           <div class="stamp acquis">mastered</div>
           <div class="stamp revoir">review</div>
           <div class="card-inner">
             <div class="face front theme-light-${visuals.theme}">
-              <div class="geo-shape ${visuals.shape} shape-saturated-${visuals.theme}">
-                <div class="font-serif font-bold text-3xl xs:text-4xl ipadmini:text-5xl text-white text-center leading-tight">
-                  ${escapeHTML(frontText)}
-                </div>
-              </div>
+              <span class="card-corner corner-tl">${suitIcon}</span>
+              <span class="card-corner corner-br">${suitIcon}</span>
+              <div class="card-word">${escapeHTML(frontText)}</div>
             </div>
             <div class="face back theme-${visuals.theme}">
-              <div class="geo-shape ${visuals.shape}">
-                <div class="translation font-serif font-bold text-3xl xs:text-4xl ipadmini:text-5xl text-white text-center leading-tight">
-                  ${escapeHTML(backText)}
-                </div>
-              </div>
+              <span class="card-corner corner-tl">${suitIcon}</span>
+              <span class="card-corner corner-br">${suitIcon}</span>
+              <div class="card-word">${escapeHTML(backText)}</div>
             </div>
           </div>`;
         return el;
@@ -1071,13 +1070,13 @@
         const cardC = cardsInDom[cardsInDom.length - 3];
 
         if (cardB) {
-          cardB.className = 'fcard absolute inset-0 rounded-[32px] z-20';
+          cardB.className = 'fcard absolute inset-0 z-20';
           cardB.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s';
           cardB.style.opacity = '';
           attachDrag(cardB);
         }
         if (cardC) {
-          cardC.className = 'fcard absolute inset-0 rounded-[32px] behind';
+          cardC.className = 'fcard absolute inset-0 behind';
           cardC.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s';
           cardC.style.opacity = '';
         }
@@ -1087,7 +1086,7 @@
           const newCardData = cardById(nextSlice[2]);
           if (newCardData) {
             const newEl = buildCard(newCardData);
-            newEl.className = 'fcard absolute inset-0 rounded-[32px] behind2';
+            newEl.className = 'fcard absolute inset-0 behind2';
             deckEl.insertBefore(newEl, deckEl.firstChild);
           }
         }
@@ -1106,10 +1105,6 @@
         el.style.transform = `translate(${dir === 'right' ? 30 : -30}px, -4px) rotate(${dir === 'right' ? 3 : -3}deg)`;
         requestAnimationFrame(() => fly(el, dir));
       }
-
-      $('btnRight').addEventListener('click', () => buttonSwipe('right'));
-      $('btnLeft').addEventListener('click', () => buttonSwipe('left'));
-      $('btnFlip').addEventListener('click', () => flipCard());
 
       document.addEventListener('keydown', e => {
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
@@ -1211,16 +1206,6 @@
         b.addEventListener('click', () => applyTheme(b.dataset.theme));
       });
 
-      function applyButtonVisibility() {
-        $('actionButtons').style.display = state.settings.showButtons ? '' : 'none';
-        mainStage.classList.toggle('buttons-hidden', !state.settings.showButtons);
-      }
-      $('toggleButtons').addEventListener('change', e => {
-        state.settings.showButtons = e.target.checked;
-        persist();
-        applyButtonVisibility();
-      });
-
       /* ============ LANGUAGE DIRECTION TOGGLE ============ */
       function updateLangToggleLabel() {
         $('langToggleLabel').textContent = state.settings.frontLang === 'fr' ? 'FR→EN' : 'EN→FR';
@@ -1261,8 +1246,6 @@
           rebuildQueue();
           renderDeck(true);
           applyTheme(state.settings.theme);
-          $('toggleButtons').checked = state.settings.showButtons;
-          applyButtonVisibility();
           updateLangToggleLabel();
           setSyncStatus('synced');
           toast('Connected!');
@@ -1283,8 +1266,6 @@
 
       load().then(() => {
         applyTheme(state.settings.theme);
-        $('toggleButtons').checked = state.settings.showButtons;
-        applyButtonVisibility();
         updateLangToggleLabel();
         inApiKey.value = syncConfig.apiKey || '';
         inBinId.value = syncConfig.binId || '';
