@@ -4,7 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Cartes · Pixel French Flashcards</title>
+  <meta name="theme-color" id="themeColorMeta" content="#FFFFFF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Wordnest · French Flashcards</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,17 +36,17 @@
   <style>
     /* ============ THEME PRESETS (retro pixel palettes) ============ */
     :root, [data-theme="doux"] {
-      /* Arcade — light, matches the reference: mint bg, white cards */
-      --app-bg: #8FC79C;
+      /* Arcade — golden marquee bg, classic ghost colors (cyan/orange/pink/red) */
+      --app-bg: #FFC93C;
       --paper: #FFFFFF;
       --card-front: #FFFFFF;
-      --ink: #1D1D1D;
-      --ink-soft: #52625A;
+      --ink: #1D1B16;
+      --ink-soft: #6B5F3E;
 
-      --theme-blue-sat: #3A6CE0;
-      --theme-orange-sat: #E2503B;
-      --theme-sage-sat: #2B2B29;
-      --theme-rose-sat: #8579EA;
+      --theme-blue-sat: #00C2E0;
+      --theme-orange-sat: #FF8A3D;
+      --theme-sage-sat: #FF6FB0;
+      --theme-rose-sat: #E8483C;
 
       --card-border: #1A1917;
     }
@@ -74,6 +77,15 @@
       --theme-orange-sat: #55732C;
       --theme-sage-sat: #3D6B32;
       --theme-rose-sat: #6D8C44;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    html {
+      background: var(--paper);
     }
 
     body {
@@ -147,24 +159,7 @@
     }
     .brand-dot { width: 8px; height: 8px; }
 
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--paper);
-      color: var(--ink-soft);
-      border: 2.5px solid var(--ink);
-      box-shadow: 2px 2px 0 var(--ink);
-      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
-      touch-action: manipulation;
-      flex-shrink: 0;
-    }
-    .icon-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
-
-    /* plain icon button, no background container (kept chrome-free per spec) */
+    /* All header controls are plain icons/text — no boxes, borders, or shadows */
     .icon-btn-plain {
       width: 38px;
       height: 38px;
@@ -182,25 +177,23 @@
 
     .lang-toggle-btn {
       height: 38px;
-      padding: 0 13px;
-      border-radius: 0;
+      padding: 0 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--paper);
+      background: transparent;
+      border: none;
       color: var(--ink-soft);
-      border: 2.5px solid var(--ink);
-      box-shadow: 2px 2px 0 var(--ink);
       font-family: 'Space Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.02em;
       white-space: nowrap;
-      transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
+      transition: transform 0.15s ease, color 0.2s ease;
       touch-action: manipulation;
       flex-shrink: 0;
     }
-    .lang-toggle-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
+    .lang-toggle-btn:active { transform: scale(0.88); }
 
     /* ============ PROGRESS PILL ============ */
     .progress-pill {
@@ -527,7 +520,7 @@
   <header id="appHeader" class="app-header">
     <div class="header-top-row">
       <div class="brand brand-pixel" style="color: var(--ink);">
-        Cartes
+        Wordnest
         <span class="brand-dot" style="background:var(--theme-rose-sat);"></span>
       </div>
       <div class="header-actions">
@@ -544,8 +537,8 @@
         <button id="btnLangToggle" aria-label="Toggle study direction" class="lang-toggle-btn">
           <span id="langToggleLabel">FR→EN</span>
         </button>
-        <button id="btnOpenAdd" aria-label="Add a card" class="icon-btn">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <button id="btnOpenAdd" aria-label="Add a card" class="icon-btn-plain">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 5v14M5 12h14"/>
           </svg>
         </button>
@@ -603,7 +596,7 @@
     <div class="flex gap-3 mb-6">
       <button class="theme-swatch" data-theme="doux">
         <span class="swatch-dots">
-          <span style="background:#3A6CE0"></span><span style="background:#E2503B"></span><span style="background:#2B2B29"></span><span style="background:#8579EA"></span>
+          <span style="background:#00C2E0"></span><span style="background:#FF8A3D"></span><span style="background:#FF6FB0"></span><span style="background:#E8483C"></span>
         </span>
         <span class="theme-swatch-label">Arcade</span>
       </button>
@@ -626,20 +619,6 @@
     <label class="sheet-label">Progress</label>
     <p class="text-xs mb-3" style="color: var(--ink-soft);">Puts every mastered card back into the learning deck.</p>
     <button id="btnResetProgress" class="sheet-secondary-btn" style="width:100%;">Reset progress</button>
-
-    <div class="sheet-divider"></div>
-
-    <label class="sheet-label">Cloud sync (JSONBin.io)</label>
-    <p class="text-xs mb-3" style="color: var(--ink-soft);">Free account at jsonbin.io &rarr; copy your API key. We'll create a bin for you the first time you connect.</p>
-    <div class="space-y-2 mb-3">
-      <input id="inApiKey" type="password" placeholder="API key (X-Master-Key)" class="sheet-input" autocomplete="off">
-      <input id="inBinId" type="text" placeholder="Bin ID (auto-filled after connecting)" class="sheet-input" autocomplete="off">
-    </div>
-    <div class="flex gap-3 mb-3">
-      <button id="btnConnectSync" class="sheet-secondary-btn">Connect</button>
-      <button id="btnDisconnectSync" class="sheet-secondary-btn">Disconnect</button>
-    </div>
-    <p id="syncStatus" class="text-xs" style="color: var(--ink-soft);">Not connected — cards saved on this device only.</p>
   </div>
 
   <div id="toast" class="toast"></div>
@@ -707,69 +686,54 @@
         return `<svg width="${unit}" height="${unit}" viewBox="0 0 ${n} ${n}" fill="currentColor" shape-rendering="crispEdges">${rects}</svg>`;
       }
 
-      const CACHE_KEY = 'cartes-deck-cache-v1';
-      const CONFIG_KEY = 'cartes-jsonbin-config-v1';
-      const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+      /* ============ LOCAL STORAGE (IndexedDB) ============ */
+      const DB_NAME = 'cartes-db';
+      const DB_VERSION = 1;
+      const STORE_NAME = 'kv';
+      const STATE_KEY = 'app-state';
 
-      let syncConfig = { apiKey: '', binId: '' };
-
-      function loadConfig() {
-        try {
-          const raw = localStorage.getItem(CONFIG_KEY);
-          return raw ? JSON.parse(raw) : { apiKey: '', binId: '' };
-        } catch (e) { return { apiKey: '', binId: '' }; }
-      }
-      function saveConfig(cfg) {
-        try { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); } catch (e) { /* ignore */ }
-      }
-
-      function cacheLocally() {
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
-      }
-      function loadLocalCache() {
-        try {
-          const raw = localStorage.getItem(CACHE_KEY);
-          return raw ? JSON.parse(raw) : null;
-        } catch (e) { return null; }
-      }
-
-      async function cloudLoad(cfg) {
-        const res = await fetch(`${JSONBIN_BASE}/${cfg.binId}/latest`, {
-          headers: { 'X-Master-Key': cfg.apiKey }
+      let dbPromise = null;
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) { reject(new Error('IndexedDB unavailable')); return; }
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = () => {
+            if (!req.result.objectStoreNames.contains(STORE_NAME)) {
+              req.result.createObjectStore(STORE_NAME);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
         });
-        if (!res.ok) throw new Error('cloud load failed');
-        const json = await res.json();
-        return json.record;
       }
-      async function cloudSave(cfg, data) {
-        const res = await fetch(`${JSONBIN_BASE}/${cfg.binId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': cfg.apiKey },
-          body: JSON.stringify(data)
-        });
-        if (!res.ok) throw new Error('cloud save failed');
+      function getDB() {
+        if (!dbPromise) dbPromise = openDB();
+        return dbPromise;
       }
-      async function cloudCreate(cfg, data) {
-        const res = await fetch(JSONBIN_BASE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': cfg.apiKey, 'X-Bin-Name': 'cartes-deck' },
-          body: JSON.stringify(data)
+      async function idbGet(key) {
+        const db = await getDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const req = tx.objectStore(STORE_NAME).get(key);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
         });
-        if (!res.ok) throw new Error('cloud create failed');
-        const json = await res.json();
-        return json.metadata.id;
+      }
+      async function idbSet(key, value) {
+        const db = await getDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).put(value, key);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
       }
 
-      function setSyncStatus(s) {
-        const el = document.getElementById('syncStatus');
-        if (!el) return;
-        const map = {
-          idle: 'Not connected — cards saved on this device only.',
-          syncing: 'Syncing…',
-          synced: 'Synced to the cloud.',
-          error: 'Sync error — check your API key and bin ID.'
-        };
-        el.textContent = map[s] || map.idle;
+      async function cacheLocally() {
+        try { await idbSet(STATE_KEY, state); } catch (e) { /* ignore */ }
+      }
+      async function loadLocalCache() {
+        try { return await idbGet(STATE_KEY); } catch (e) { return null; }
       }
 
       function seedIfEmpty() {
@@ -779,65 +743,31 @@
         });
       }
 
-      // Merge two card sets by id. "mastered" only ever turns true, never back to
-      // false here — that prevents a stale/slow cloud write from un-mastering a
-      // card that was already marked done locally. Cards present in only one set
-      // are kept too, so nothing gets silently dropped by a partial sync.
-      function mergeCardSets(a, b) {
-        const map = new Map();
-        (a || []).forEach(c => map.set(c.id, { ...c }));
-        (b || []).forEach(c => {
-          const existing = map.get(c.id);
-          if (existing) {
-            existing.mastered = existing.mastered || !!c.mastered;
-          } else {
-            map.set(c.id, { ...c });
-          }
-        });
-        return Array.from(map.values());
-      }
-
       async function load() {
-        syncConfig = loadConfig();
+        let cached = await loadLocalCache();
 
-        const cached = loadLocalCache();
+        // One-time migration from the old localStorage-based store, if present.
+        if (!cached) {
+          try {
+            const legacy = localStorage.getItem('cartes-deck-cache-v1');
+            if (legacy) {
+              cached = JSON.parse(legacy);
+              localStorage.removeItem('cartes-deck-cache-v1');
+            }
+          } catch (e) { /* ignore */ }
+        }
+        try { localStorage.removeItem('cartes-jsonbin-config-v1'); } catch (e) { /* ignore */ }
+
         if (cached) {
           state.cards = cached.cards || [];
           state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, cached.settings || {});
         }
-
-        if (syncConfig.apiKey && syncConfig.binId) {
-          setSyncStatus('syncing');
-          try {
-            const cloud = await cloudLoad(syncConfig);
-            if (cloud) {
-              state.cards = mergeCardSets(state.cards, cloud.cards || []);
-              state.settings = Object.assign(state.settings, cloud.settings || {});
-            }
-            setSyncStatus('synced');
-          } catch (e) {
-            setSyncStatus('error');
-          }
-        }
-
         seedIfEmpty();
         cacheLocally();
       }
 
-      let saveTimer = null;
       function persist() {
         cacheLocally();
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(async () => {
-          if (!syncConfig.apiKey || !syncConfig.binId) return;
-          try {
-            setSyncStatus('syncing');
-            await cloudSave(syncConfig, state);
-            setSyncStatus('synced');
-          } catch (e) {
-            setSyncStatus('error');
-          }
-        }, 700);
       }
 
       const $ = id => document.getElementById(id);
@@ -1134,7 +1064,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'cartes-export.json';
+        a.download = 'wordnest-export.json';
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -1191,6 +1121,9 @@
         state.settings.theme = name;
         persist();
         document.querySelectorAll('.theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+        const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+        const meta = document.getElementById('themeColorMeta');
+        if (meta && paperColor) meta.setAttribute('content', paperColor);
       }
       document.querySelectorAll('.theme-swatch').forEach(b => {
         b.addEventListener('click', () => applyTheme(b.dataset.theme));
@@ -1221,59 +1154,9 @@
       }
       $('btnLangToggle').addEventListener('click', toggleFrontLang);
 
-      /* ============ CLOUD SYNC UI ============ */
-      const inApiKey = $('inApiKey'), inBinId = $('inBinId');
-
-      $('btnConnectSync').addEventListener('click', async () => {
-        const apiKey = inApiKey.value.trim();
-        let binId = inBinId.value.trim();
-        if (!apiKey) { toast('Enter your API key first'); return; }
-
-        setSyncStatus('syncing');
-        try {
-          if (!binId) {
-            binId = await cloudCreate({ apiKey }, state);
-            inBinId.value = binId;
-          } else {
-            const cloud = await cloudLoad({ apiKey, binId });
-            if (cloud && Array.isArray(cloud.cards)) {
-              state.cards = mergeCardSets(state.cards, cloud.cards);
-              state.settings = Object.assign(state.settings, cloud.settings || {});
-              await cloudSave({ apiKey, binId }, state);
-            } else {
-              await cloudSave({ apiKey, binId }, state);
-            }
-          }
-          syncConfig = { apiKey, binId };
-          saveConfig(syncConfig);
-          cacheLocally();
-          rebuildQueue();
-          renderDeck(true);
-          applyTheme(state.settings.theme);
-          updateLangToggleLabel();
-          setSyncStatus('synced');
-          toast('Connected!');
-        } catch (e) {
-          setSyncStatus('error');
-          toast('Could not connect — check your key and bin ID');
-        }
-      });
-
-      $('btnDisconnectSync').addEventListener('click', () => {
-        syncConfig = { apiKey: '', binId: '' };
-        saveConfig(syncConfig);
-        inApiKey.value = '';
-        inBinId.value = '';
-        setSyncStatus('idle');
-        toast('Disconnected — saving locally only');
-      });
-
       load().then(() => {
         applyTheme(state.settings.theme);
         updateLangToggleLabel();
-        inApiKey.value = syncConfig.apiKey || '';
-        inBinId.value = syncConfig.binId || '';
-        if (!syncConfig.apiKey || !syncConfig.binId) setSyncStatus('idle');
         rebuildQueue();
         renderDeck(true);
       });
