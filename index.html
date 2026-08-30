@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -16,8 +16,8 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Pixelify Sans', 'sans-serif'],
-            serif: ['Pixelify Sans', 'sans-serif'],
+            sans: ['Space Mono', 'monospace'],
+            serif: ['Space Mono', 'monospace'],
           },
           screens: {
             'xs': '380px',
@@ -40,10 +40,12 @@
       --ink: #1D1D1D;
       --ink-soft: #52625A;
 
-      --theme-blue-sat: #3457A6;
-      --theme-orange-sat: #E8983B;
-      --theme-sage-sat: #2F8F52;
-      --theme-rose-sat: #D8425F;
+      --theme-blue-sat: #3A6CE0;
+      --theme-orange-sat: #E2503B;
+      --theme-sage-sat: #2B2B29;
+      --theme-rose-sat: #8579EA;
+
+      --card-border: #1A1917;
     }
 
     [data-theme="nuit"] {
@@ -78,11 +80,13 @@
       background-color: var(--app-bg);
       color: var(--ink);
       overflow: hidden;
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.3s ease, color 0.3s ease;
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
+      display: flex;
+      flex-direction: column;
     }
 
     /* generic stepped pixel-corner cuts */
@@ -105,8 +109,9 @@
 
     /* ============ HEADER (auto-hide overlay) ============ */
     .app-header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: relative;
+      width: 100%;
+      flex-shrink: 0;
       z-index: 50;
       padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
       display: flex;
@@ -115,12 +120,6 @@
       gap: 10px;
       background: var(--paper);
       border-bottom: 4px solid var(--ink);
-      transform: translateY(-100%);
-      transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1);
-      will-change: transform;
-    }
-    .app-header.visible {
-      transform: translateY(0);
     }
 
     .header-top-row {
@@ -138,8 +137,9 @@
     }
 
     .brand-pixel {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 13px;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 19px;
       letter-spacing: 0.01em;
       display: flex;
       align-items: center;
@@ -150,7 +150,7 @@
     .icon-btn {
       width: 38px;
       height: 38px;
-      border-radius: 9999px;
+      border-radius: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,7 +191,7 @@
       color: var(--ink-soft);
       border: 3px solid var(--ink);
       box-shadow: 3px 3px 0 var(--ink);
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -224,7 +224,8 @@
 
     /* ============ MAIN STAGE ============ */
     .main-stage {
-      height: 100dvh;
+      flex: 1;
+      min-height: 0;
       width: 100vw;
       display: flex;
       flex-direction: column;
@@ -232,7 +233,6 @@
       justify-content: center;
       gap: clamp(18px, 4vh, 34px);
       padding: 16px;
-      padding-top: calc(16px + env(safe-area-inset-top));
       padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
 
@@ -262,12 +262,7 @@
     .face {
       position: absolute;
       inset: 0;
-      clip-path: polygon(
-        0 14px, 14px 14px, 14px 0,
-        calc(100% - 14px) 0, calc(100% - 14px) 14px, 100% 14px,
-        100% calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), calc(100% - 14px) 100%,
-        14px 100%, 14px calc(100% - 14px), 0 calc(100% - 14px)
-      );
+      border-radius: 26px;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       display: flex;
@@ -275,8 +270,8 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 5px solid var(--ink);
-      box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.22);
+      border: 9px solid var(--card-border);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.15), 0 10px 18px rgba(0, 0, 0, 0.18);
       transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -295,7 +290,7 @@
     .face.front { color: var(--suit-color); }
 
     .card-word {
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-weight: 700;
       font-size: clamp(26px, 7.5vw, 42px);
       text-align: center;
@@ -333,13 +328,8 @@
       position: absolute;
       inset: 0;
       z-index: 6;
-      clip-path: polygon(
-        0 14px, 14px 14px, 14px 0,
-        calc(100% - 14px) 0, calc(100% - 14px) 14px, 100% 14px,
-        100% calc(100% - 14px), calc(100% - 14px) calc(100% - 14px), calc(100% - 14px) 100%,
-        14px 100%, 14px calc(100% - 14px), 0 calc(100% - 14px)
-      );
-      border: 5px solid var(--ink);
+      border-radius: 26px;
+      border: 9px solid var(--card-border);
       background-image: repeating-conic-gradient(var(--card-front) 0% 25%, color-mix(in srgb, var(--theme-blue-sat) 45%, var(--card-front)) 0% 50%);
       background-size: 22px 22px;
     }
@@ -355,7 +345,7 @@
     .stamp {
       position: absolute;
       bottom: 24px;
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -409,7 +399,7 @@
 
     .sheet-input {
       width: 100%;
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 13px;
       border-radius: 6px;
       padding: 12px 14px;
@@ -435,7 +425,7 @@
       padding: 13px;
       background: var(--ink);
       color: var(--paper);
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 13px;
       font-weight: 700;
       border-radius: 8px;
@@ -448,7 +438,7 @@
     .sheet-secondary-btn {
       flex: 1;
       padding: 11px;
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 12px;
       font-weight: 700;
       border-radius: 8px;
@@ -486,7 +476,7 @@
     .swatch-dots { display: flex; gap: 3px; }
     .swatch-dots span { width: 10px; height: 10px; border-radius: 2px; display: block; }
     .theme-swatch-label {
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.03em;
@@ -524,7 +514,7 @@
     .sheet-row-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 
     .toast {
-      font-family: 'Pixelify Sans', sans-serif;
+      font-family: 'Space Mono', monospace;
       box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
       border: 2.5px solid rgba(0,0,0,0.15);
     }
@@ -613,7 +603,7 @@
     <div class="flex gap-3 mb-6">
       <button class="theme-swatch" data-theme="doux">
         <span class="swatch-dots">
-          <span style="background:#3457A6"></span><span style="background:#E8983B"></span><span style="background:#2F8F52"></span><span style="background:#D8425F"></span>
+          <span style="background:#3A6CE0"></span><span style="background:#E2503B"></span><span style="background:#2B2B29"></span><span style="background:#8579EA"></span>
         </span>
         <span class="theme-swatch-label">Arcade</span>
       </button>
@@ -828,8 +818,6 @@
 
       const $ = id => document.getElementById(id);
       const deckEl = $('deck');
-      const appHeader = $('appHeader');
-      const mainStage = $('mainStage');
       const progressPill = $('progressPill');
       const sheetBackdrop = $('sheetBackdrop');
       const addSheet = $('addSheet');
@@ -847,27 +835,6 @@
           t.className = "toast fixed left-1/2 -translate-x-1/2 bottom-12 bg-[var(--ink)] text-[var(--paper)] text-xs font-semibold px-5 py-2.5 rounded-md z-[9999] transition-all transform translate-y-4 opacity-0 pointer-events-none";
         }, 1800);
       }
-
-      /* ============ HEADER AUTO-HIDE ============ */
-      const HEADER_TAP_ZONE = 70; // px from top of screen that reveals the header
-      let hideTimer = null;
-      function showHeader() {
-        appHeader.classList.add('visible');
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 2200);
-      }
-      function hideHeaderNow() {
-        clearTimeout(hideTimer);
-        appHeader.classList.remove('visible');
-      }
-      document.addEventListener('pointerdown', e => {
-        if (e.clientY <= HEADER_TAP_ZONE) showHeader();
-      }, { passive: true });
-      appHeader.addEventListener('pointerenter', () => clearTimeout(hideTimer));
-      appHeader.addEventListener('pointerleave', () => {
-        hideTimer = setTimeout(() => appHeader.classList.remove('visible'), 1400);
-      });
-      setTimeout(showHeader, 250);
 
       /* ============ PROGRESS PILL ============ */
       function updateProgress() {
@@ -926,7 +893,7 @@
       }
 
       function emptyHTML(glyph, title, body, action, label) {
-        return `<div class="empty flex flex-col items-center justify-center text-center p-6 rounded-lg w-full h-full" style="background:var(--card-front); border:5px solid var(--ink); box-shadow:7px 7px 0 rgba(0,0,0,0.22);">
+        return `<div class="empty flex flex-col items-center justify-center text-center p-6 w-full h-full" style="background:var(--card-front); border:9px solid var(--card-border); border-radius:26px; box-shadow:0 8px 0 rgba(0,0,0,0.15), 0 10px 18px rgba(0,0,0,0.18);">
           <div class="glyph text-5xl mb-4" style="color:var(--theme-rose-sat);">${glyph}</div>
           <h2 class="font-semibold text-xl mb-2" style="color:var(--ink);">${title}</h2>
           <p class="text-xs max-w-[220px] mb-6 leading-relaxed" style="color:var(--ink-soft);">${body}</p>
@@ -990,7 +957,6 @@
 
         const down = e => {
           if (animating) return;
-          hideHeaderNow();
           dragging = true;
           moved = false;
           startX = e.clientX;
