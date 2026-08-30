@@ -423,6 +423,19 @@
       display: block;
       margin-bottom: 6px;
     }
+    .sheet-code-block {
+      font-family: var(--app-font);
+      font-size: 11px;
+      line-height: 1.5;
+      background: color-mix(in srgb, var(--ink) 6%, transparent);
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--ink);
+      margin: 0;
+    }
     .sheet-primary-btn {
       width: 100%;
       padding: 13px;
@@ -589,7 +602,18 @@
     <div class="sheet-divider"></div>
 
     <label class="sheet-label">Import / Export (JSON)</label>
-    <p class="text-xs mb-3" style="color: var(--ink-soft);">A list of French / English pairs.</p>
+    <p class="text-xs mb-2" style="color: var(--ink-soft);">Expected format — an array of French / English pairs:</p>
+    <pre class="sheet-code-block">[
+  { "fr": "bonjour", "en": "hello" },
+  { "fr": "merci", "en": "thank you" }
+]</pre>
+
+    <p class="text-xs mb-2 mt-3" style="color: var(--ink-soft);">No file handy? Copy this prompt into any AI chatbot, save what it gives you as a .json file, then import it below.</p>
+    <div class="flex gap-2 mb-3">
+      <input id="promptTopic" placeholder="topic — e.g. cooking, travel" class="sheet-input" style="flex:1;" autocomplete="off">
+      <button id="btnCopyPrompt" class="sheet-secondary-btn" style="flex:0 0 auto; padding-left:14px; padding-right:14px;">Copy prompt</button>
+    </div>
+
     <div class="flex gap-3">
       <button id="btnImport" class="sheet-secondary-btn">Import</button>
       <button id="btnExport" class="sheet-secondary-btn">Export</button>
@@ -792,20 +816,7 @@
       }
 
       async function load() {
-        let cached = await loadLocalCache();
-
-        // One-time migration from the old localStorage-based store, if present.
-        if (!cached) {
-          try {
-            const legacy = localStorage.getItem('cartes-deck-cache-v1');
-            if (legacy) {
-              cached = JSON.parse(legacy);
-              localStorage.removeItem('cartes-deck-cache-v1');
-            }
-          } catch (e) { /* ignore */ }
-        }
-        try { localStorage.removeItem('cartes-jsonbin-config-v1'); } catch (e) { /* ignore */ }
-
+        const cached = await loadLocalCache();
         if (cached) {
           state.cards = cached.cards || [];
           state.settings = Object.assign({ theme: 'vif', showButtons: true, frontLang: 'fr', fontFamily: 'spaceMono', fontSize: 'md' }, cached.settings || {});
@@ -1106,6 +1117,31 @@
       }
 
       /* ============ IMPORT / EXPORT ============ */
+      $('btnCopyPrompt').addEventListener('click', async () => {
+        const topic = $('promptTopic').value.trim() || 'everyday vocabulary';
+        const prompt = `Create 100 JSON pairs of French/English vocabulary words for practicing the topic: "${topic}". Return ONLY a raw JSON array in exactly this format, with no extra text, no markdown code fences, and no explanation:\n\n[{"fr": "french word or phrase", "en": "english translation"}, ...]`;
+
+        try {
+          await navigator.clipboard.writeText(prompt);
+          toast('Prompt copied!');
+        } catch (e) {
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = prompt;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            toast('Prompt copied!');
+          } catch (e2) {
+            toast('Could not copy — select the text manually');
+          }
+        }
+      });
+
       $('btnExport').addEventListener('click', () => {
         const data = state.cards.map(c => ({ fr: c.fr, en: c.en }));
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
