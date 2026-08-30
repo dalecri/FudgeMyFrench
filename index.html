@@ -156,13 +156,13 @@
       justify-content: center;
       background: var(--paper);
       color: var(--ink-soft);
-      border: 3px solid var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
+      border: 2.5px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
       transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
       touch-action: manipulation;
       flex-shrink: 0;
     }
-    .icon-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+    .icon-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
 
     /* plain icon button, no background container (kept chrome-free per spec) */
     .icon-btn-plain {
@@ -183,14 +183,14 @@
     .lang-toggle-btn {
       height: 38px;
       padding: 0 13px;
-      border-radius: 8px;
+      border-radius: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--paper);
       color: var(--ink-soft);
-      border: 3px solid var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
+      border: 2.5px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
       font-family: 'Space Mono', monospace;
       font-size: 11px;
       font-weight: 700;
@@ -200,7 +200,7 @@
       touch-action: manipulation;
       flex-shrink: 0;
     }
-    .lang-toggle-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+    .lang-toggle-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
 
     /* ============ PROGRESS PILL ============ */
     .progress-pill {
@@ -623,6 +623,12 @@
 
     <div class="sheet-divider"></div>
 
+    <label class="sheet-label">Progress</label>
+    <p class="text-xs mb-3" style="color: var(--ink-soft);">Puts every mastered card back into the learning deck.</p>
+    <button id="btnResetProgress" class="sheet-secondary-btn" style="width:100%;">Reset progress</button>
+
+    <div class="sheet-divider"></div>
+
     <label class="sheet-label">Cloud sync (JSONBin.io)</label>
     <p class="text-xs mb-3" style="color: var(--ink-soft);">Free account at jsonbin.io &rarr; copy your API key. We'll create a bin for you the first time you connect.</p>
     <div class="space-y-2 mb-3">
@@ -773,6 +779,24 @@
         });
       }
 
+      // Merge two card sets by id. "mastered" only ever turns true, never back to
+      // false here — that prevents a stale/slow cloud write from un-mastering a
+      // card that was already marked done locally. Cards present in only one set
+      // are kept too, so nothing gets silently dropped by a partial sync.
+      function mergeCardSets(a, b) {
+        const map = new Map();
+        (a || []).forEach(c => map.set(c.id, { ...c }));
+        (b || []).forEach(c => {
+          const existing = map.get(c.id);
+          if (existing) {
+            existing.mastered = existing.mastered || !!c.mastered;
+          } else {
+            map.set(c.id, { ...c });
+          }
+        });
+        return Array.from(map.values());
+      }
+
       async function load() {
         syncConfig = loadConfig();
 
@@ -787,8 +811,8 @@
           try {
             const cloud = await cloudLoad(syncConfig);
             if (cloud) {
-              state.cards = cloud.cards || [];
-              state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, cloud.settings || {});
+              state.cards = mergeCardSets(state.cards, cloud.cards || []);
+              state.settings = Object.assign(state.settings, cloud.settings || {});
             }
             setSyncStatus('synced');
           } catch (e) {
@@ -1172,6 +1196,19 @@
         b.addEventListener('click', () => applyTheme(b.dataset.theme));
       });
 
+      /* ============ RESET PROGRESS ============ */
+      $('btnResetProgress').addEventListener('click', () => {
+        const masteredCount = state.cards.filter(c => c.mastered).length;
+        if (masteredCount === 0) { toast('Nothing to reset'); return; }
+        if (!confirm(`Move ${masteredCount} mastered card(s) back into the learning deck?`)) return;
+        state.cards.forEach(c => { c.mastered = false; });
+        persist();
+        rebuildQueue();
+        renderDeck(true);
+        closeSheets();
+        toast('Progress reset');
+      });
+
       /* ============ LANGUAGE DIRECTION TOGGLE ============ */
       function updateLangToggleLabel() {
         $('langToggleLabel').textContent = state.settings.frontLang === 'fr' ? 'FR→EN' : 'EN→FR';
@@ -1200,8 +1237,9 @@
           } else {
             const cloud = await cloudLoad({ apiKey, binId });
             if (cloud && Array.isArray(cloud.cards)) {
-              state.cards = cloud.cards;
+              state.cards = mergeCardSets(state.cards, cloud.cards);
               state.settings = Object.assign(state.settings, cloud.settings || {});
+              await cloudSave({ apiKey, binId }, state);
             } else {
               await cloudSave({ apiKey, binId }, state);
             }
