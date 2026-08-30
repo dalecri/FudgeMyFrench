@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="vif">
 
 <head>
   <meta charset="UTF-8">
@@ -11,7 +11,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -34,6 +34,12 @@
   </script>
 
   <style>
+    /* ============ GLOBAL TYPE SETTINGS (independent of color theme) ============ */
+    :root {
+      --app-font: 'Space Mono', monospace;
+      --word-scale: 1;
+    }
+
     /* ============ THEME PRESETS (retro pixel palettes) ============ */
     :root, [data-theme="doux"] {
       /* Arcade — golden marquee bg, classic ghost colors (cyan/orange/pink/red) */
@@ -92,7 +98,7 @@
       background-color: var(--app-bg);
       color: var(--ink);
       overflow: hidden;
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.3s ease, color 0.3s ease;
       padding-left: env(safe-area-inset-left);
@@ -149,7 +155,7 @@
     }
 
     .brand-pixel {
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-weight: 700;
       font-size: 19px;
       letter-spacing: 0.01em;
@@ -184,7 +190,7 @@
       background: transparent;
       border: none;
       color: var(--ink-soft);
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -283,9 +289,9 @@
     .face.front { color: var(--suit-color); }
 
     .card-word {
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-weight: 700;
-      font-size: clamp(26px, 7.5vw, 42px);
+      font-size: calc(clamp(26px, 7.5vw, 42px) * var(--word-scale));
       text-align: center;
       line-height: 1.2;
       padding: 0 30px;
@@ -338,7 +344,7 @@
     .stamp {
       position: absolute;
       bottom: 24px;
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -392,7 +398,7 @@
 
     .sheet-input {
       width: 100%;
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 13px;
       border-radius: 6px;
       padding: 12px 14px;
@@ -418,7 +424,7 @@
       padding: 13px;
       background: var(--ink);
       color: var(--paper);
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 13px;
       font-weight: 700;
       border-radius: 8px;
@@ -431,7 +437,7 @@
     .sheet-secondary-btn {
       flex: 1;
       padding: 11px;
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 12px;
       font-weight: 700;
       border-radius: 8px;
@@ -469,7 +475,7 @@
     .swatch-dots { display: flex; gap: 3px; }
     .swatch-dots span { width: 10px; height: 10px; border-radius: 2px; display: block; }
     .theme-swatch-label {
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.03em;
@@ -507,7 +513,7 @@
     .sheet-row-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 
     .toast {
-      font-family: 'Space Mono', monospace;
+      font-family: var(--app-font);
       box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
       border: 2.5px solid rgba(0,0,0,0.15);
     }
@@ -593,7 +599,7 @@
     <h3 class="font-semibold text-lg text-center mb-5" style="color: var(--ink);">Customize</h3>
 
     <label class="sheet-label">Theme</label>
-    <div class="flex gap-3 mb-6">
+    <div class="flex gap-3 mb-6" id="themeOptions">
       <button class="theme-swatch" data-theme="doux">
         <span class="swatch-dots">
           <span style="background:#00C2E0"></span><span style="background:#FF8A3D"></span><span style="background:#FF6FB0"></span><span style="background:#E8483C"></span>
@@ -616,6 +622,44 @@
 
     <div class="sheet-divider"></div>
 
+    <label class="sheet-label">Font</label>
+    <div class="flex gap-2 mb-6" id="fontOptions">
+      <button class="theme-swatch" data-font="spaceMono">
+        <span style="font-family:'Space Mono',monospace; font-size:18px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">Space</span>
+      </button>
+      <button class="theme-swatch" data-font="jetbrainsMono">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">JetBrains</span>
+      </button>
+      <button class="theme-swatch" data-font="ibmPlexMono">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">Plex</span>
+      </button>
+      <button class="theme-swatch" data-font="vt323">
+        <span style="font-family:'VT323',monospace; font-size:22px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">VT323</span>
+      </button>
+    </div>
+
+    <label class="sheet-label">Card text size</label>
+    <div class="flex gap-2 mb-6" id="sizeOptions">
+      <button class="theme-swatch" data-size="sm">
+        <span style="font-family:var(--app-font); font-size:14px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">Small</span>
+      </button>
+      <button class="theme-swatch" data-size="md">
+        <span style="font-family:var(--app-font); font-size:18px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">Medium</span>
+      </button>
+      <button class="theme-swatch" data-size="lg">
+        <span style="font-family:var(--app-font); font-size:22px; font-weight:700; color:var(--ink);">Aa</span>
+        <span class="theme-swatch-label">Large</span>
+      </button>
+    </div>
+
+    <div class="sheet-divider"></div>
+
     <label class="sheet-label">Progress</label>
     <p class="text-xs mb-3" style="color: var(--ink-soft);">Puts every mastered card back into the learning deck.</p>
     <button id="btnResetProgress" class="sheet-secondary-btn" style="width:100%;">Reset progress</button>
@@ -631,7 +675,7 @@
         return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       }
 
-      let state = { cards: [], settings: { theme: 'doux', showButtons: true, frontLang: 'fr' } };
+      let state = { cards: [], settings: { theme: 'vif', showButtons: true, frontLang: 'fr', fontFamily: 'spaceMono', fontSize: 'md' } };
       let queue = [];
       let flipped = false;
       let animating = false;
@@ -760,7 +804,7 @@
 
         if (cached) {
           state.cards = cached.cards || [];
-          state.settings = Object.assign({ theme: 'doux', showButtons: true, frontLang: 'fr' }, cached.settings || {});
+          state.settings = Object.assign({ theme: 'vif', showButtons: true, frontLang: 'fr', fontFamily: 'spaceMono', fontSize: 'md' }, cached.settings || {});
         }
         seedIfEmpty();
         cacheLocally();
@@ -1120,13 +1164,43 @@
         document.documentElement.setAttribute('data-theme', name);
         state.settings.theme = name;
         persist();
-        document.querySelectorAll('.theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+        document.querySelectorAll('#themeOptions .theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
         const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
         const meta = document.getElementById('themeColorMeta');
         if (meta && paperColor) meta.setAttribute('content', paperColor);
       }
-      document.querySelectorAll('.theme-swatch').forEach(b => {
+      document.querySelectorAll('#themeOptions .theme-swatch').forEach(b => {
         b.addEventListener('click', () => applyTheme(b.dataset.theme));
+      });
+
+      /* ============ FONT FAMILY + TEXT SIZE ============ */
+      const FONT_STACKS = {
+        spaceMono: "'Space Mono', monospace",
+        jetbrainsMono: "'JetBrains Mono', monospace",
+        ibmPlexMono: "'IBM Plex Mono', monospace",
+        vt323: "'VT323', monospace"
+      };
+      const FONT_SCALES = { sm: 0.85, md: 1, lg: 1.2 };
+
+      function applyFontFamily(key) {
+        const stack = FONT_STACKS[key] || FONT_STACKS.spaceMono;
+        document.documentElement.style.setProperty('--app-font', stack);
+        state.settings.fontFamily = key;
+        persist();
+        document.querySelectorAll('#fontOptions .theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.font === key));
+      }
+      function applyFontSize(key) {
+        const scale = FONT_SCALES[key] || 1;
+        document.documentElement.style.setProperty('--word-scale', scale);
+        state.settings.fontSize = key;
+        persist();
+        document.querySelectorAll('#sizeOptions .theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.size === key));
+      }
+      document.querySelectorAll('#fontOptions .theme-swatch').forEach(b => {
+        b.addEventListener('click', () => applyFontFamily(b.dataset.font));
+      });
+      document.querySelectorAll('#sizeOptions .theme-swatch').forEach(b => {
+        b.addEventListener('click', () => applyFontSize(b.dataset.size));
       });
 
       /* ============ RESET PROGRESS ============ */
@@ -1156,6 +1230,8 @@
 
       load().then(() => {
         applyTheme(state.settings.theme);
+        applyFontFamily(state.settings.fontFamily);
+        applyFontSize(state.settings.fontSize);
         updateLangToggleLabel();
         rebuildQueue();
         renderDeck(true);
