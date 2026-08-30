@@ -97,7 +97,7 @@
       height: 100%;
     }
     html {
-      background: var(--paper);
+      background: var(--app-bg);
     }
 
     body {
@@ -137,13 +137,13 @@
       width: 100%;
       flex-shrink: 0;
       z-index: 50;
-      padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+      padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       gap: 10px;
-      background: var(--paper);
-      border-bottom: 4px solid var(--ink);
+      background: transparent;
+      border: none;
     }
 
     .header-top-row {
@@ -1207,9 +1207,9 @@
         state.settings.theme = name;
         persist();
         document.querySelectorAll('#themeOptions .theme-swatch').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
-        const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+        const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--app-bg').trim();
         const meta = document.getElementById('themeColorMeta');
-        if (meta && paperColor) meta.setAttribute('content', paperColor);
+        if (meta && bgColor) meta.setAttribute('content', bgColor);
       }
       document.querySelectorAll('#themeOptions .theme-swatch').forEach(b => {
         b.addEventListener('click', () => applyTheme(b.dataset.theme));
